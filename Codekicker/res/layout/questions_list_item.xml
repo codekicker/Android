@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:orientation="vertical"
+			  style="@style/QuestionsList">
+	<TextView android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:id="@+id/headlineTextView"
+			  style="@style/QuestionsList.Headline"
+			  android:text="Headline"/>
+	<TextView android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:id="@+id/questionTextView"
+			  style="@style/QuestionsList.Question"
+			  android:text="Question"/>
+	<LinearLayout android:layout_height="wrap_content"
+				  android:layout_width="fill_parent"
+				  android:orientation="horizontal"
+				  android:id="@+id/tagsLinearLayout"
+				  android:layout_marginBottom="5sp" />
+	<LinearLayout android:layout_height="wrap_content"
+				  android:layout_width="fill_parent"
+				  android:orientation="horizontal"
+				  android:paddingLeft="5sp"
+				  android:paddingBottom="10sp">
+		<LinearLayout android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  android:orientation="vertical"
+					  style="@style/QuestionsList.Counter">
+			<TextView android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:id="@+id/ratingsTextView"
+					  style="@style/QuestionsList.Counter.Number"
+					  android:text="0" />
+			<TextView android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  style="@style/QuestionsList.Counter.Text"
+					  android:text="@string/ratings" />
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  android:orientation="vertical"
+					  style="@style/QuestionsList.Counter">
+			<TextView android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:id="@+id/answersTextView"
+					  style="@style/QuestionsList.Counter.Number"
+					  android:text="0" />
+			<TextView android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  style="@style/QuestionsList.Counter.Text"
+					  android:text="@string/answers" />
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  android:orientation="vertical"
+					  style="@style/QuestionsList.Counter">
+			<TextView android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:id="@+id/viewsTextView"
+					  style="@style/QuestionsList.Counter.Number"
+					  android:text="0" />
+			<TextView android:layout_width="wrap_content"
+					  android:layout_height="wrap_content"
+					  style="@style/QuestionsList.Counter.Text"
+					  android:text="@string/views" />
+		</LinearLayout>
+		<TextView android:layout_width="fill_parent"
+				  android:layout_height="fill_parent"
+				  android:id="@+id/timeTextView"
+				  style="@style/QuestionsList.Time"
+				  android:text="@string/time"/>
+	</LinearLayout>
+</LinearLayout>

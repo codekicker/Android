@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/menuItemProfile"
+		  android:icon="@drawable/ic_menu_friendslist"
+		  android:title="@string/profile" />
+	<item android:id="@+id/menuItemPreferences"
+		  android:icon="@drawable/ic_menu_preferences"
+		  android:title="@string/settings" />
+	<item android:id="@+id/menuItemRefresh"
+		  android:icon="@drawable/ic_menu_refresh"
+		  android:title="@string/refresh" />
+</menu>
