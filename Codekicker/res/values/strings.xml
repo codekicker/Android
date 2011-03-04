@@ -12,4 +12,5 @@
 	<string name="refreshingQuestions">Aktualisiere Fragen...</string>
 	<string name="yourAnswer">Deine Antwort</string>
 	<string name="answerQuestion">Antworten</string>
+	<string name="answersCount">%1$s Antworten</string>
 </resources>

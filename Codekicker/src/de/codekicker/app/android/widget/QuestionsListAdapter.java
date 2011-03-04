@@ -40,20 +40,20 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 			listItemView = inflater.inflate(listItemResourceId, null);
 		}
 		Question question = questions.get(position);
-		TextView headlineTextView = (TextView) listItemView.findViewById(R.id.headlineTextView);
-		TextView questionTextView = (TextView) listItemView.findViewById(R.id.questionTextView);
-		TextView timeTextView = (TextView) listItemView.findViewById(R.id.timeTextView);
-		LinearLayout tagsLinearLayout = (LinearLayout) listItemView.findViewById(R.id.tagsLinearLayout);
-		tagsLinearLayout.removeAllViews();
+		TextView textViewHeadline = (TextView) listItemView.findViewById(R.id.textViewHeadline);
+		TextView textViewQuestion = (TextView) listItemView.findViewById(R.id.textViewQuestion);
+		TextView textViewTime = (TextView) listItemView.findViewById(R.id.textViewTime);
+		LinearLayout linearLayoutTags = (LinearLayout) listItemView.findViewById(R.id.linearLayoutTags);
+		linearLayoutTags.removeAllViews();
 		for (String tag : question.getTags()) {
-			FrameLayout tagFrameLayout = (FrameLayout) inflater.inflate(R.layout.questions_list_tag, null);
-			TextView tagTextView = (TextView) tagFrameLayout.getChildAt(0);
-			tagTextView.setText(tag);
-			tagsLinearLayout.addView(tagFrameLayout);
+			FrameLayout frameLayoutTag = (FrameLayout) inflater.inflate(R.layout.questions_list_tag, null);
+			TextView textViewTag = (TextView) frameLayoutTag.getChildAt(0);
+			textViewTag.setText(tag);
+			linearLayoutTags.addView(frameLayoutTag);
 		}
-		headlineTextView.setText(question.getHeadline());
-		questionTextView.setText(question.getQuestion().substring(0, 170));
-		timeTextView.setText(String.format(resources.getString(R.string.time), "15", "m"));
+		textViewHeadline.setText(question.getHeadline());
+		textViewQuestion.setText(question.getQuestion().substring(0, 170));
+		textViewTime.setText(String.format(resources.getString(R.string.time), "15", "m"));
 		return listItemView;
 	}
 }

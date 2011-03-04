@@ -1,10 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:orientation="vertical" style="@style/QuestionsList">
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Headline" style="@style/QuestionsList.Headline" android:id="@+id/headlineTextView"></TextView>
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/questionTextView"></TextView>
-    <EditText android:id="@+id/editText1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:hint="@string/yourAnswer"></EditText>
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/answerButton" android:text="@string/answerQuestion"></Button>
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="fill_parent"
+				  android:layout_height="fill_parent"
+				  style="@style/QuestionsList"
+				  android:orientation="vertical">
+		<TextView android:layout_width="fill_parent"
+				  android:layout_height="wrap_content"
+				  android:text="Headline"
+				  style="@style/QuestionsList.Headline"
+				  android:id="@+id/textViewHeadline" />
+		<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+			<LinearLayout android:layout_width="wrap_content"
+						  android:layout_height="wrap_content"
+						  android:orientation="vertical">
+				<ImageButton android:layout_width="wrap_content"
+							 android:layout_height="wrap_content"
+							 android:id="@+id/imageButtonUpvote"
+							 style="@style/QuestionDetails.VoteButton"
+							 android:src="@drawable/upvote" />
+				<TextView android:id="@+id/textViewVotes"
+						  android:layout_width="fill_parent"
+						  android:layout_height="wrap_content"
+						  android:text="0"
+						  style="@style/QuestionDetails.Votes"/>
+				<ImageButton android:layout_width="wrap_content"
+							 android:layout_height="wrap_content"
+							 android:id="@+id/imageButtonDownvote"
+							 style="@style/QuestionDetails.VoteButton"
+							 android:src="@drawable/downvote" />
+			</LinearLayout>
+			<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/textViewQuestion" android:text="Question" />
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent"
+					  android:layout_height="wrap_content"
+					  android:id="@+id/answers">
+			<TextView android:layout_height="wrap_content"
+					  android:layout_width="fill_parent"
+					  android:text="@string/answersCount"
+					  style="@style/QuestionDetails.AnswersCount"
+					  android:id="@+id/textViewAnswersCount" />			
+		</LinearLayout>
+		<View style="@style/QuestionDetails.Divider" />
+		<EditText android:layout_width="fill_parent"
+				  android:layout_height="wrap_content"
+				  android:hint="@string/yourAnswer"
+				  android:id="@+id/editTextYourAnswer" />
+		<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/answerQuestion"
+				android:id="@+id/buttonAnswer"
+				android:layout_gravity="right" />
+	</LinearLayout>
+</ScrollView>
