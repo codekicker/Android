@@ -88,7 +88,7 @@ public class QuestionsList extends ListActivity {
     }
 
 	private void downloadQuestions() {
-		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingQuestions));
+		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
 		Intent intent = new Intent(this, QuestionsDownloader.class);
 		startService(intent);
 	}

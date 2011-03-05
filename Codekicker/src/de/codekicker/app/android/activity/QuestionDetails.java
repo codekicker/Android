@@ -1,7 +1,9 @@
 package de.codekicker.app.android.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,12 +13,15 @@ import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
 
 public class QuestionDetails extends Activity implements OnClickListener {
+	private Handler handler = new Handler();
+	private ProgressDialog progressDialog;
 	private ImageButton imageButtonUpvote;
 	private ImageButton imageButtonDownvote;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
 		setContentView(R.layout.question_details);
 		Question selectedQuestion = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
 		TextView textViewHeadline = (TextView) findViewById(R.id.textViewHeadline);
@@ -31,6 +36,12 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		textViewHeadline.setText(selectedQuestion.getHeadline());
 		textViewQuestion.setText(selectedQuestion.getQuestion());
 		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), 1));
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				progressDialog.hide();
+			}
+		}, 5000);
 	}
 
 	@Override

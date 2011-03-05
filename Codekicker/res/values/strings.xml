@@ -9,7 +9,7 @@
 	<string name="profile">Profil</string>
 	<string name="settings">Einstellungen</string>
 	<string name="refresh">Aktualisieren</string>
-	<string name="refreshingQuestions">Aktualisiere Fragen...</string>
+	<string name="refreshingData">Aktualisiere Daten...</string>
 	<string name="yourAnswer">Deine Antwort</string>
 	<string name="answerQuestion">Antworten</string>
 	<string name="answersCount">%1$s Antworten</string>
