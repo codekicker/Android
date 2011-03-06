@@ -32,6 +32,8 @@ public class QuestionsList extends ListActivity {
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
+					// Avoid multiple notifications to the view
+					listAdapter.setNotifyOnChange(false);
 					for (Parcelable p : intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions")) {
 						listAdapter.add((Question) p);
 					}
@@ -47,8 +49,6 @@ public class QuestionsList extends ListActivity {
         super.onCreate(savedInstanceState);
         registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
     	listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
-    	// Will be reset in the BroadcastReceiver above via notifyDataSetChanged()
-    	listAdapter.setNotifyOnChange(false);
         setListAdapter(listAdapter);
         registerForContextMenu(getListView());
         downloadQuestions();

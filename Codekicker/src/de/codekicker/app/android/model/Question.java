@@ -16,6 +16,7 @@ public class Question implements Parcelable {
 		}
 	};
 	
+	private int id;
 	private String headline;
 	private String question;
 	private int ratings;
@@ -23,14 +24,18 @@ public class Question implements Parcelable {
 	private int views;
 	private String[] tags;
 	private String fromUsername;
+	private String elapsedTime;
 	
-	public Question(String headline,
+	public Question(int id,
+					String headline,
 					String question,
 					int ratings,
 					int answers,
 					int views,
 					String[] tags,
-					String fromUsername) {
+					String fromUsername,
+					String elapsedTime) {
+		this.id = id;
 		this.headline = headline;
 		this.question = question;
 		this.ratings = ratings;
@@ -38,9 +43,11 @@ public class Question implements Parcelable {
 		this.views = views;
 		this.tags = tags;
 		this.fromUsername = fromUsername;
+		this.elapsedTime = elapsedTime;
 	}
 	
 	private Question(Parcel parcel) {
+		id = parcel.readInt();
 		headline = parcel.readString();
 		question = parcel.readString();
 		ratings = parcel.readInt();
@@ -48,6 +55,11 @@ public class Question implements Parcelable {
 		views = parcel.readInt();
 		tags = parcel.createStringArray();
 		fromUsername = parcel.readString();
+		elapsedTime = parcel.readString();
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public String getHeadline() {
@@ -77,6 +89,10 @@ public class Question implements Parcelable {
 	public String getFromUsername() {
 		return fromUsername;
 	}
+	
+	public String getElapsedTime() {
+		return elapsedTime;
+	}
 
 	@Override
 	public int describeContents() {
@@ -85,6 +101,7 @@ public class Question implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
 		dest.writeString(headline);
 		dest.writeString(question);
 		dest.writeInt(ratings);
@@ -92,5 +109,6 @@ public class Question implements Parcelable {
 		dest.writeInt(views);
 		dest.writeStringArray(tags);
 		dest.writeString(fromUsername);
+		dest.writeString(elapsedTime);
 	}
 }

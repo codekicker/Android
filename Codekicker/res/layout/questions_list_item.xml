@@ -68,8 +68,8 @@
 		</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 				  android:layout_height="fill_parent"
-				  android:id="@+id/textViewTime"
 				  style="@style/QuestionsList.Time"
-				  android:text="@string/time"/>
+				  android:text="@string/elapsedTime"
+				  android:id="@+id/textViewElapsedTime"/>
 	</LinearLayout>
 </LinearLayout>

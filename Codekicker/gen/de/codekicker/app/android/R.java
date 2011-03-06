@@ -38,11 +38,11 @@ public final class R {
         public static final int textViewAuthor=0x7f070008;
         public static final int textViewBadgeBronze=0x7f07000a;
         public static final int textViewBadgeBronzeCounter=0x7f07000b;
+        public static final int textViewElapsedTime=0x7f070014;
         public static final int textViewHeadline=0x7f070000;
         public static final int textViewQuestion=0x7f070004;
         public static final int textViewRatings=0x7f070011;
         public static final int textViewReputation=0x7f070009;
-        public static final int textViewTime=0x7f070014;
         public static final int textViewViews=0x7f070013;
         public static final int textViewVotes=0x7f070002;
     }
@@ -60,12 +60,12 @@ public final class R {
         public static final int answers=0x7f040003;
         public static final int answersCount=0x7f04000c;
         public static final int app_name=0x7f040000;
+        public static final int elapsedTime=0x7f040005;
         public static final int profile=0x7f040006;
         public static final int ratings=0x7f040001;
         public static final int refresh=0x7f040008;
         public static final int refreshingData=0x7f040009;
         public static final int settings=0x7f040007;
-        public static final int time=0x7f040005;
         public static final int views=0x7f040004;
         public static final int yourAnswer=0x7f04000a;
     }

@@ -1,6 +1,16 @@
 package de.codekicker.app.android.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -9,6 +19,7 @@ import de.codekicker.app.android.model.Question;
 
 public class QuestionsDownloader extends IntentService {
 	private static final String TAG = "QuestionsDownloader";
+	private static final String DOWNLOAD_URL = "http://android.echooff.de/codekicker_mock.php";
 	
 	public QuestionsDownloader() {
 		super("QuestionsDownloader");
@@ -16,22 +27,68 @@ public class QuestionsDownloader extends IntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		Log.v(TAG, "onHandleIntent()");
-		// TODO: Downloading questions
-		ArrayList<Question> questions = new ArrayList<Question>(5);
-    	for (int i = 0; i < 15; i++) {
-    		Question q = new Question("Lorem ipsum dolor sit amet " + i + "?", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In aliquam, arcu sit amet blandit tempor, sem felis ultricies dolor, quis faucibus magna mauris quis ipsum. Duis massa nisl, fermentum ac sollicitudin a, pharetra convallis nisi. Aenean eleifend egestas ullamcorper. Pellentesque vitae elit dolor. Nulla tempus leo ut turpis mattis rutrum. Phasellus placerat volutpat elementum. Fusce mi mauris, auctor sed malesuada non, interdum nec erat. Fusce ac felis id felis vulputate congue ut non eros. Vestibulum ut metus mi, non mattis massa. Duis convallis, elit et semper placerat, purus urna bibendum ante, id accumsan enim dui vitae tellus. In facilisis lectus vel ante dictum viverra. Ut adipiscing tincidunt tellus, eu imperdiet tortor iaculis in. In sagittis gravida congue. Vestibulum adipiscing bibendum molestie. Curabitur laoreet porttitor nisi vitae porttitor.", 5, 0, 27, new String[] {"lorem", "ipsum", "dolor", "sit", "amet"}, "Logdog82");
-    		questions.add(q);
-    	}
+		Log.v(TAG, "Downloading questions");
+		BufferedReader bufferedReader = null;
+		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
-			// Simulate long download process
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			URL url = new URL(DOWNLOAD_URL);
+			InputStream inputStream = url.openStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			bufferedReader = new BufferedReader(inputStreamReader);
+			StringBuilder stringBuilder = new StringBuilder();
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+			String json = stringBuilder.toString();
+			Log.v(TAG, json);
+			questions = createQuestions(json);
+		} catch (MalformedURLException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage(), e);
+				}
+			}
 		}
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED");
 		broadcastIntent.putParcelableArrayListExtra("de.codekicker.app.android.Questions", questions);
 		sendBroadcast(broadcastIntent);
+	}
+	
+	private ArrayList<Question> createQuestions(String json) {
+		Log.v(TAG, "Creating question models");
+		ArrayList<Question> questions = new ArrayList<Question>();
+		try {
+			JSONObject jsonObject = new JSONObject(json);
+			JSONArray rawQuestions = jsonObject.getJSONArray("questions");
+			for (int i = 0; i < rawQuestions.length(); i++) {
+				JSONObject rawQuestion = rawQuestions.getJSONObject(i);
+				JSONArray jsonTags = rawQuestion.getJSONArray("tags");
+				int jsonTagsLength = jsonTags.length();
+				String[] tags = new String[jsonTagsLength];
+				for (int j = 0; j < jsonTagsLength; j++) {
+					tags[j] = jsonTags.getString(j);
+				}
+				Question question = new Question(rawQuestion.getInt("id"),
+												 rawQuestion.getString("headline"),
+												 rawQuestion.getString("question"),
+												 rawQuestion.getInt("ratings"),
+												 rawQuestion.getInt("answers"),
+												 rawQuestion.getInt("views"),
+												 tags,
+												 rawQuestion.getString("username"),
+												 rawQuestion.getString("elapsedTime"));
+				questions.add(question);
+			}
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return questions;
 	}
 }

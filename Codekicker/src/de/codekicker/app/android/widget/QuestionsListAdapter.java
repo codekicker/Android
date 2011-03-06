@@ -42,7 +42,10 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		Question question = questions.get(position);
 		TextView textViewHeadline = (TextView) listItemView.findViewById(R.id.textViewHeadline);
 		TextView textViewQuestion = (TextView) listItemView.findViewById(R.id.textViewQuestion);
-		TextView textViewTime = (TextView) listItemView.findViewById(R.id.textViewTime);
+		TextView textViewRatings = (TextView) listItemView.findViewById(R.id.textViewRatings);
+		TextView textViewAnswers = (TextView) listItemView.findViewById(R.id.textViewAnswers);
+		TextView textViewViews = (TextView) listItemView.findViewById(R.id.textViewViews);
+		TextView textViewElapsedTime = (TextView) listItemView.findViewById(R.id.textViewElapsedTime);
 		LinearLayout linearLayoutTags = (LinearLayout) listItemView.findViewById(R.id.linearLayoutTags);
 		linearLayoutTags.removeAllViews();
 		for (String tag : question.getTags()) {
@@ -53,7 +56,10 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		}
 		textViewHeadline.setText(question.getHeadline());
 		textViewQuestion.setText(question.getQuestion().substring(0, 170));
-		textViewTime.setText(String.format(resources.getString(R.string.time), "15", "m"));
+		textViewRatings.setText(Integer.toString(question.getRatings()));
+		textViewAnswers.setText(Integer.toString(question.getAnswers()));
+		textViewViews.setText(Integer.toString(question.getViews()));
+		textViewElapsedTime.setText(String.format(resources.getString(R.string.elapsedTime), question.getElapsedTime()));
 		return listItemView;
 	}
 }

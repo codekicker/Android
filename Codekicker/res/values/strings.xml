@@ -5,7 +5,7 @@
 	<string name="answer">Antwort</string>
 	<string name="answers">Antworten</string>
 	<string name="views">Aufrufe</string>
-	<string name="time">vor %1$s%2$s</string>
+	<string name="elapsedTime">vor %1$s</string>
 	<string name="profile">Profil</string>
 	<string name="settings">Einstellungen</string>
 	<string name="refresh">Aktualisieren</string>
