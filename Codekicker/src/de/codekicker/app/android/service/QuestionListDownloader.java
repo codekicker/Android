@@ -17,12 +17,12 @@ import android.content.Intent;
 import android.util.Log;
 import de.codekicker.app.android.model.Question;
 
-public class QuestionsDownloader extends IntentService {
-	private static final String TAG = "QuestionsDownloader";
-	private static final String DOWNLOAD_URL = "http://android.echooff.de/codekicker_mock.php";
+public class QuestionListDownloader extends IntentService {
+	private static final String TAG = "QuestionListDownloader";
+	private static final String DOWNLOAD_URL = "http://android.echooff.de/codekicker_question_list_mock.php";
 	
-	public QuestionsDownloader() {
-		super("QuestionsDownloader");
+	public QuestionListDownloader() {
+		super(TAG);
 	}
 	
 	@Override

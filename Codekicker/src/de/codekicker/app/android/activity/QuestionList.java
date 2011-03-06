@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
@@ -17,30 +16,26 @@ import android.view.View;
 import android.widget.ListView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
-import de.codekicker.app.android.service.QuestionsDownloader;
+import de.codekicker.app.android.service.QuestionListDownloader;
 import de.codekicker.app.android.widget.QuestionsListAdapter;
 
-public class QuestionsList extends ListActivity {
-	private static final String TAG = "QuestionsList";
-	private Handler handler = new Handler();
+public class QuestionList extends ListActivity {
+	private static final String TAG = "QuestionList";
 	private QuestionsListAdapter listAdapter;
 	private ProgressDialog progressDialog;
 	private BroadcastReceiver questionsDownloadedReceiver = new BroadcastReceiver() {
+		private static final String TAG = "QuestionsDownloadedReceiver";
+		
 		@Override
 		public void onReceive(Context context, final Intent intent) {
-			// Call to the UI thread because this callback is in another Thread
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					// Avoid multiple notifications to the view
-					listAdapter.setNotifyOnChange(false);
-					for (Parcelable p : intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions")) {
-						listAdapter.add((Question) p);
-					}
-					listAdapter.notifyDataSetChanged();
-					progressDialog.hide();
-				}
-			});
+			Log.v(TAG, "Adding questions to list");
+			// Avoid multiple notifications to the view
+			listAdapter.setNotifyOnChange(false);
+			for (Parcelable p : intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions")) {
+				listAdapter.add((Question) p);
+			}
+			listAdapter.notifyDataSetChanged();
+			progressDialog.hide();
 		}
 	};
 	
@@ -58,7 +53,7 @@ public class QuestionsList extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
     	Question selectedQuestion = (Question) listView.getItemAtPosition(position);
     	Intent intent = new Intent(this, QuestionDetails.class);
-    	intent.putExtra("de.codekicker.app.android.SelectedQuestion", selectedQuestion);
+    	intent.putExtra("de.codekicker.app.android.SelectedQuestionId", selectedQuestion.getId());
     	startActivity(intent);
     }
     
@@ -89,7 +84,7 @@ public class QuestionsList extends ListActivity {
 
 	private void downloadQuestions() {
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-		Intent intent = new Intent(this, QuestionsDownloader.class);
+		Intent intent = new Intent(this, QuestionListDownloader.class);
 		startService(intent);
 	}
 }
