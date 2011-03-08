@@ -1,5 +1,8 @@
 package de.codekicker.app.android.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,17 +23,18 @@ public class Question implements Parcelable {
 	private String headline;
 	private String question;
 	private int ratings;
-	private int answers;
+	private int answersCount;
 	private int views;
 	private String[] tags;
 	private String fromUsername;
 	private String elapsedTime;
+	private List<Answer> answers;
 	
 	public Question(int id,
 					String headline,
 					String question,
 					int ratings,
-					int answers,
+					int answersCount,
 					int views,
 					String[] tags,
 					String fromUsername,
@@ -39,11 +43,12 @@ public class Question implements Parcelable {
 		this.headline = headline;
 		this.question = question;
 		this.ratings = ratings;
-		this.answers = answers;
+		this.answersCount = answersCount;
 		this.views = views;
 		this.tags = tags;
 		this.fromUsername = fromUsername;
 		this.elapsedTime = elapsedTime;
+		answers = new ArrayList<Answer>();
 	}
 	
 	private Question(Parcel parcel) {
@@ -51,11 +56,13 @@ public class Question implements Parcelable {
 		headline = parcel.readString();
 		question = parcel.readString();
 		ratings = parcel.readInt();
-		answers = parcel.readInt();
+		answersCount = parcel.readInt();
 		views = parcel.readInt();
 		tags = parcel.createStringArray();
 		fromUsername = parcel.readString();
 		elapsedTime = parcel.readString();
+		answers = new ArrayList<Answer>();
+		parcel.readTypedList(answers, Answer.CREATOR);
 	}
 	
 	public int getId() {
@@ -74,8 +81,8 @@ public class Question implements Parcelable {
 		return ratings;
 	}
 	
-	public int getAnswers() {
-		return answers;
+	public int getAnswersCount() {
+		return answersCount;
 	}
 	
 	public int getViews() {
@@ -93,6 +100,14 @@ public class Question implements Parcelable {
 	public String getElapsedTime() {
 		return elapsedTime;
 	}
+	
+	public void add(Answer answer) {
+		answers.add(answer);
+	}
+	
+	public Iterable<Answer> getAnswers() {
+		return answers;
+	}
 
 	@Override
 	public int describeContents() {
@@ -105,10 +120,11 @@ public class Question implements Parcelable {
 		dest.writeString(headline);
 		dest.writeString(question);
 		dest.writeInt(ratings);
-		dest.writeInt(answers);
+		dest.writeInt(answersCount);
 		dest.writeInt(views);
 		dest.writeStringArray(tags);
 		dest.writeString(fromUsername);
 		dest.writeString(elapsedTime);
+		dest.writeList(answers);
 	}
 }

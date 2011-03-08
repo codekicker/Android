@@ -30,7 +30,8 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.v(TAG, "Broadcast received");
-			foo();
+			Question question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
+			questionDownloaded(question);
 		}
 	};
 	
@@ -39,9 +40,9 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-		int questionId = getIntent().getIntExtra("de.codekicker.app.android.SelectedQuestionId", -1);
+		Question question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
 		Intent intent = new Intent(this, QuestionDetailsDownloader.class);
-		intent.putExtra("de.codekicker.app.android.QuestionId", questionId);
+		intent.putExtra("de.codekicker.app.android.Question", question);
 		startService(intent);
 		setContentView(R.layout.question_details);
 //		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
@@ -66,7 +67,7 @@ public class QuestionDetails extends Activity implements OnClickListener {
 //		}, 5000);
 	}
 	
-	private void foo() {
+	private void questionDownloaded(Question question) {
 		progressDialog.hide();
 	}
 

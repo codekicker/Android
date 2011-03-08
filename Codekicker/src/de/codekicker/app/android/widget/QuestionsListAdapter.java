@@ -57,7 +57,7 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		textViewHeadline.setText(question.getHeadline());
 		textViewQuestion.setText(question.getQuestion().substring(0, 170));
 		textViewRatings.setText(Integer.toString(question.getRatings()));
-		textViewAnswers.setText(Integer.toString(question.getAnswers()));
+		textViewAnswers.setText(Integer.toString(question.getAnswersCount()));
 		textViewViews.setText(Integer.toString(question.getViews()));
 		textViewElapsedTime.setText(String.format(resources.getString(R.string.elapsedTime), question.getElapsedTime()));
 		return listItemView;

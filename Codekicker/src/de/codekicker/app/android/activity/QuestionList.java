@@ -53,7 +53,7 @@ public class QuestionList extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
     	Question selectedQuestion = (Question) listView.getItemAtPosition(position);
     	Intent intent = new Intent(this, QuestionDetails.class);
-    	intent.putExtra("de.codekicker.app.android.SelectedQuestionId", selectedQuestion.getId());
+    	intent.putExtra("de.codekicker.app.android.SelectedQuestion", selectedQuestion);
     	startActivity(intent);
     }
     
