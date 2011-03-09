@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Answer;
@@ -62,9 +63,11 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		textViewElapsedTime.setText(String.format(getString(R.string.elapsedTime), question.getElapsedTime()));
 		textViewAuthor.setText(question.getFromUsername());
 		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), question.getAnswersCount()));
+		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
+		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) linearLayoutAnswers);
 		for (Answer answer : question.getAnswers()) {
-			LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) findViewById(R.id.frameLayoutAnswers));
+			
 		}
 		progressDialog.hide();
 	}

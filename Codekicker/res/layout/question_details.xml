@@ -67,9 +67,9 @@
 					  android:text="@string/answersCount"
 					  style="@style/QuestionDetails.AnswersCount"
 					  android:id="@+id/textViewAnswersCount" />
-			<FrameLayout android:layout_height="wrap_content"
+			<LinearLayout android:layout_height="wrap_content"
 						 android:layout_width="fill_parent"
-						 android:id="@+id/frameLayoutAnswers" />
+						 android:id="@+id/linearLayoutAnswers" />
 		</LinearLayout>
 		<View style="@style/QuestionDetails.Divider" />
 		<EditText android:layout_width="fill_parent"

@@ -24,10 +24,10 @@ public final class R {
         public static final int answers=0x7f07000c;
         public static final int buttonAnswer=0x7f070010;
         public static final int editTextYourAnswer=0x7f07000f;
-        public static final int frameLayoutAnswers=0x7f07000e;
         public static final int imageButtonDownvote=0x7f070003;
         public static final int imageButtonUpvote=0x7f070001;
         public static final int imageView1=0x7f070007;
+        public static final int linearLayoutAnswers=0x7f07000e;
         public static final int linearLayoutAuthor=0x7f070005;
         public static final int linearLayoutTags=0x7f070012;
         public static final int menuItemPreferences=0x7f070017;
