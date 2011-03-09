@@ -9,12 +9,15 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
+import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.service.QuestionDetailsDownloader;
 import de.codekicker.app.android.service.QuestionListDownloader;
@@ -38,36 +41,31 @@ public class QuestionDetails extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
+		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
 		Question question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
 		Intent intent = new Intent(this, QuestionDetailsDownloader.class);
 		intent.putExtra("de.codekicker.app.android.Question", question);
 		startService(intent);
 		setContentView(R.layout.question_details);
-//		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-//		Question selectedQuestion = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
-//		TextView textViewHeadline = (TextView) findViewById(R.id.textViewHeadline);
-//		TextView textViewQuestion = (TextView) findViewById(R.id.textViewQuestion);
-//		imageButtonUpvote = (ImageButton) findViewById(R.id.imageButtonUpvote);
-//		imageButtonDownvote = (ImageButton) findViewById(R.id.imageButtonDownvote);
-//		TextView textViewAnswersCount = (TextView) findViewById(R.id.textViewAnswersCount);
-//		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
-//		buttonAnswer.setOnClickListener(this);
-//		imageButtonUpvote.setOnClickListener(this);
-//		imageButtonDownvote.setOnClickListener(this);
-//		textViewHeadline.setText(selectedQuestion.getHeadline());
-//		textViewQuestion.setText(selectedQuestion.getQuestion());
-//		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), 1));
-//		handler.postDelayed(new Runnable() {
-//			@Override
-//			public void run() {
-//				progressDialog.hide();
-//			}
-//		}, 5000);
 	}
 	
 	private void questionDownloaded(Question question) {
+		Log.v(TAG, "Fill view");
+		TextView textViewHeadLine = (TextView) findViewById(R.id.textViewHeadline);
+		TextView textViewQuestion = (TextView) findViewById(R.id.textViewQuestion);
+		TextView textViewElapsedTime = (TextView) findViewById(R.id.textViewElapsedTime);
+		TextView textViewAuthor = (TextView) findViewById(R.id.textViewAuthor);
+		TextView textViewAnswersCount = (TextView) findViewById(R.id.textViewAnswersCount);
+		textViewHeadLine.setText(question.getHeadline());
+		textViewQuestion.setText(question.getQuestion());
+		textViewElapsedTime.setText(String.format(getString(R.string.elapsedTime), question.getElapsedTime()));
+		textViewAuthor.setText(question.getFromUsername());
+		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), question.getAnswersCount()));
+		for (Answer answer : question.getAnswers()) {
+			LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) findViewById(R.id.frameLayoutAnswers));
+		}
 		progressDialog.hide();
 	}
 
