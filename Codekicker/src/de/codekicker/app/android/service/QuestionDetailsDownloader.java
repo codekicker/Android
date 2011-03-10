@@ -69,9 +69,9 @@ public class QuestionDetailsDownloader extends IntentService {
 			for (int i = 0; i < rawAnswers.length(); i++) {
 				JSONObject rawAnswer = rawAnswers.getJSONObject(i);
 				Answer answer = new Answer(rawAnswer.getString("text"),
-										   rawAnswer.getString("username"),
-										   rawAnswer.getString("elapsedTime"),
-										   rawAnswer.getInt("reputation"));
+						rawAnswer.getString("username"),
+						rawAnswer.getString("elapsedTime"),
+						rawAnswer.getInt("reputation"));
 				question.add(answer);
 			}
 		} catch (JSONException e) {

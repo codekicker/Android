@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">codekicker</string>
-	<string name="ratings">Bewertungen</string>
+	<string name="voteScore">Bewertungen</string>
 	<string name="answer">Antwort</string>
 	<string name="answers">Antworten</string>
 	<string name="views">Aufrufe</string>
-	<string name="elapsedTime">vor %1$s</string>
+	<string name="askDate">vor %1$s</string>
 	<string name="profile">Profil</string>
 	<string name="settings">Einstellungen</string>
 	<string name="refresh">Aktualisieren</string>

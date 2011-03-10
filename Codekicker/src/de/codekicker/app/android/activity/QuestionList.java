@@ -39,48 +39,48 @@ public class QuestionList extends ListActivity {
 		}
 	};
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
-    	listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
-        setListAdapter(listAdapter);
-        registerForContextMenu(getListView());
-        downloadQuestions();
-    }
-    
-    @Override
-    protected void onListItemClick(ListView listView, View view, int position, long id) {
-    	Question selectedQuestion = (Question) listView.getItemAtPosition(position);
-    	Intent intent = new Intent(this, QuestionDetails.class);
-    	intent.putExtra("de.codekicker.app.android.SelectedQuestion", selectedQuestion);
-    	startActivity(intent);
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	MenuInflater inflater = getMenuInflater();
-    	inflater.inflate(R.menu.questions_list_options_menu, menu);
-    	return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch (item.getItemId()) {
-    	case R.id.menuItemProfile:
-    		Log.v(TAG, "Profile menu item selected.");
-    		return true;
-    	case R.id.menuItemPreferences:
-    		Log.v(TAG, "Preferences menu item selected.");
-    		return true;
-    	case R.id.menuItemRefresh:
-    		Log.v(TAG, "Refresh menu item selected.");
-    		downloadQuestions();
-    		return true;
-    	default:
-    		return super.onOptionsItemSelected(item);
-    	}
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
+		listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
+		setListAdapter(listAdapter);
+		registerForContextMenu(getListView());
+		downloadQuestions();
+	}
+
+	@Override
+	protected void onListItemClick(ListView listView, View view, int position, long id) {
+		Question selectedQuestion = (Question) listView.getItemAtPosition(position);
+		Intent intent = new Intent(this, QuestionDetails.class);
+		intent.putExtra("de.codekicker.app.android.SelectedQuestion", selectedQuestion);
+		startActivity(intent);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.questions_list_options_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuItemProfile:
+			Log.v(TAG, "Profile menu item selected.");
+			return true;
+		case R.id.menuItemPreferences:
+			Log.v(TAG, "Preferences menu item selected.");
+			return true;
+		case R.id.menuItemRefresh:
+			Log.v(TAG, "Refresh menu item selected.");
+			downloadQuestions();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
 	private void downloadQuestions() {
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));

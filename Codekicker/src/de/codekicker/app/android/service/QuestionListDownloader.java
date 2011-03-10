@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 import de.codekicker.app.android.model.Question;
+import de.codekicker.app.android.model.User;
 
 public class QuestionListDownloader extends IntentService {
 	private static final String TAG = "QuestionListDownloader";
@@ -78,24 +80,31 @@ public class QuestionListDownloader extends IntentService {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
 			JSONObject jsonObject = new JSONObject(json);
-			JSONArray rawQuestions = jsonObject.getJSONArray("questions");
+			JSONArray rawQuestions = jsonObject.getJSONArray("Questions");
 			for (int i = 0; i < rawQuestions.length(); i++) {
 				JSONObject rawQuestion = rawQuestions.getJSONObject(i);
-				JSONArray jsonTags = rawQuestion.getJSONArray("tags");
+				JSONArray jsonTags = rawQuestion.getJSONArray("Tags");
 				int jsonTagsLength = jsonTags.length();
 				String[] tags = new String[jsonTagsLength];
 				for (int j = 0; j < jsonTagsLength; j++) {
 					tags[j] = jsonTags.getString(j);
 				}
-				Question question = new Question(rawQuestion.getInt("id"),
-												 rawQuestion.getString("headline"),
-												 rawQuestion.getString("question"),
-												 rawQuestion.getInt("ratings"),
-												 rawQuestion.getInt("answers"),
-												 rawQuestion.getInt("views"),
-												 tags,
-												 rawQuestion.getString("username"),
-												 rawQuestion.getString("elapsedTime"));
+				JSONObject rawUserInfo = rawQuestion.getJSONObject("UserInfo");
+				User user = new User(rawUserInfo.getInt("ID"),
+						rawUserInfo.getString("Name"),
+						rawUserInfo.getString("UrlName"),
+						rawUserInfo.getInt("Reputation"));
+				Question question = new Question(rawQuestion.getInt("ID"),
+						rawQuestion.getString("Title"),
+						rawQuestion.getString("UrlName"),
+						new Date(),
+						rawQuestion.getString("QuestionBody"),
+						rawQuestion.getBoolean("HasAcceptedAnswer"),
+						rawQuestion.getInt("VoteScore"),
+						rawQuestion.getInt("AnswerCount"),
+						rawQuestion.getInt("ViewCount"),
+						tags,
+						user);
 				questions.add(question);
 			}
 		} catch (JSONException e) {

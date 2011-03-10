@@ -40,12 +40,12 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 			listItemView = inflater.inflate(listItemResourceId, null);
 		}
 		Question question = questions.get(position);
-		TextView textViewHeadline = (TextView) listItemView.findViewById(R.id.textViewHeadline);
-		TextView textViewQuestion = (TextView) listItemView.findViewById(R.id.textViewQuestion);
-		TextView textViewRatings = (TextView) listItemView.findViewById(R.id.textViewRatings);
-		TextView textViewAnswers = (TextView) listItemView.findViewById(R.id.textViewAnswers);
-		TextView textViewViews = (TextView) listItemView.findViewById(R.id.textViewViews);
-		TextView textViewElapsedTime = (TextView) listItemView.findViewById(R.id.textViewElapsedTime);
+		TextView textViewTitle = (TextView) listItemView.findViewById(R.id.textViewTitle);
+		TextView textViewQuestionBody = (TextView) listItemView.findViewById(R.id.textViewQuestionBody);
+		TextView textViewVoteScore = (TextView) listItemView.findViewById(R.id.textViewVoteScore);
+		TextView textViewAnswerCount = (TextView) listItemView.findViewById(R.id.textViewAnswerCount);
+		TextView textViewViewCount = (TextView) listItemView.findViewById(R.id.textViewViewCount);
+		TextView textViewAskDate = (TextView) listItemView.findViewById(R.id.textViewAskDate);
 		LinearLayout linearLayoutTags = (LinearLayout) listItemView.findViewById(R.id.linearLayoutTags);
 		linearLayoutTags.removeAllViews();
 		for (String tag : question.getTags()) {
@@ -54,12 +54,14 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 			textViewTag.setText(tag);
 			linearLayoutTags.addView(frameLayoutTag);
 		}
-		textViewHeadline.setText(question.getHeadline());
-		textViewQuestion.setText(question.getQuestion().substring(0, 170));
-		textViewRatings.setText(Integer.toString(question.getRatings()));
-		textViewAnswers.setText(Integer.toString(question.getAnswersCount()));
-		textViewViews.setText(Integer.toString(question.getViews()));
-		textViewElapsedTime.setText(String.format(resources.getString(R.string.elapsedTime), question.getElapsedTime()));
+		textViewTitle.setText(question.getTitle());
+		String questionBody = question.getQuestionBody();
+		questionBody = questionBody.length() > 170 ? questionBody.substring(0, 170) : questionBody;
+		textViewQuestionBody.setText(questionBody);
+		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
+		textViewAnswerCount.setText(Integer.toString(question.getAnswerCount()));
+		textViewViewCount.setText(Integer.toString(question.getViewCount()));
+		textViewAskDate.setText(String.format(resources.getString(R.string.askDate), question.getAskDate()));
 		return listItemView;
 	}
 }

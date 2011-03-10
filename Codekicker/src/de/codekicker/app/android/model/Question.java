@@ -1,6 +1,7 @@
 package de.codekicker.app.android.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.os.Parcel;
@@ -20,47 +21,47 @@ public class Question implements Parcelable {
 	};
 	
 	private int id;
-	private String headline;
-	private String question;
-	private int ratings;
-	private int answersCount;
-	private int views;
+	private String title;
+	private String urlName;
+	private Date askDate;
+	private String questionBody;
+	private boolean hasAcceptedAnswer;
+	private int voteScore;
+	private int answerCount;
+	private int viewCount;
 	private String[] tags;
-	private String fromUsername;
-	private String elapsedTime;
+	private User user;
 	private List<Answer> answers;
 	
-	public Question(int id,
-					String headline,
-					String question,
-					int ratings,
-					int answersCount,
-					int views,
-					String[] tags,
-					String fromUsername,
-					String elapsedTime) {
+	public Question(int id, String title, String urlName, Date askDate,
+					String questionBody, boolean hasAcceptedAnswer, int voteScore,
+					int answerCount, int viewCount, String[] tags, User user) {
 		this.id = id;
-		this.headline = headline;
-		this.question = question;
-		this.ratings = ratings;
-		this.answersCount = answersCount;
-		this.views = views;
+		this.title = title;
+		this.urlName = urlName;
+		this.askDate = askDate;
+		this.questionBody = questionBody;
+		this.hasAcceptedAnswer = hasAcceptedAnswer;
+		this.voteScore = voteScore;
+		this.answerCount = answerCount;
+		this.viewCount = viewCount;
 		this.tags = tags;
-		this.fromUsername = fromUsername;
-		this.elapsedTime = elapsedTime;
+		this.user = user;
 		answers = new ArrayList<Answer>();
 	}
 	
 	private Question(Parcel parcel) {
 		id = parcel.readInt();
-		headline = parcel.readString();
-		question = parcel.readString();
-		ratings = parcel.readInt();
-		answersCount = parcel.readInt();
-		views = parcel.readInt();
+		title = parcel.readString();
+		urlName = parcel.readString();
+		askDate = new Date(parcel.readLong());
+		questionBody = parcel.readString();
+		hasAcceptedAnswer = parcel.readInt() == 1;
+		voteScore = parcel.readInt();
+		answerCount = parcel.readInt();
+		viewCount = parcel.readInt();
 		tags = parcel.createStringArray();
-		fromUsername = parcel.readString();
-		elapsedTime = parcel.readString();
+		user = parcel.readParcelable(User.class.getClassLoader());
 		answers = new ArrayList<Answer>();
 		parcel.readTypedList(answers, Answer.CREATOR);
 	}
@@ -68,39 +69,47 @@ public class Question implements Parcelable {
 	public int getId() {
 		return id;
 	}
-	
-	public String getHeadline() {
-		return headline;
+
+	public String getTitle() {
+		return title;
 	}
-	
-	public String getQuestion() {
-		return question;
+
+	public String getUrlName() {
+		return urlName;
 	}
-	
-	public int getRatings() {
-		return ratings;
+
+	public Date getAskDate() {
+		return askDate;
 	}
-	
-	public int getAnswersCount() {
-		return answersCount;
+
+	public String getQuestionBody() {
+		return questionBody;
 	}
-	
-	public int getViews() {
-		return views;
+
+	public boolean hasAcceptedAnswer() {
+		return hasAcceptedAnswer;
 	}
-	
+
+	public int getVoteScore() {
+		return voteScore;
+	}
+
+	public int getAnswerCount() {
+		return answerCount;
+	}
+
+	public int getViewCount() {
+		return viewCount;
+	}
+
 	public String[] getTags() {
 		return tags;
 	}
-	
-	public String getFromUsername() {
-		return fromUsername;
+
+	public User getUser() {
+		return user;
 	}
-	
-	public String getElapsedTime() {
-		return elapsedTime;
-	}
-	
+
 	public void add(Answer answer) {
 		answers.add(answer);
 	}
@@ -117,14 +126,16 @@ public class Question implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
-		dest.writeString(headline);
-		dest.writeString(question);
-		dest.writeInt(ratings);
-		dest.writeInt(answersCount);
-		dest.writeInt(views);
+		dest.writeString(title);
+		dest.writeString(urlName);
+		dest.writeLong(askDate.getTime());
+		dest.writeString(questionBody);
+		dest.writeInt(hasAcceptedAnswer ? 1 : 0);
+		dest.writeInt(voteScore);
+		dest.writeInt(answerCount);
+		dest.writeInt(viewCount);
 		dest.writeStringArray(tags);
-		dest.writeString(fromUsername);
-		dest.writeString(elapsedTime);
+		dest.writeParcelable(user, flags);
 		dest.writeList(answers);
 	}
 }

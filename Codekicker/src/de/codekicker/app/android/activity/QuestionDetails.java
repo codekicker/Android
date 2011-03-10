@@ -53,22 +53,22 @@ public class QuestionDetails extends Activity implements OnClickListener {
 	
 	private void questionDownloaded(Question question) {
 		Log.v(TAG, "Fill view");
-		TextView textViewHeadLine = (TextView) findViewById(R.id.textViewHeadline);
-		TextView textViewQuestion = (TextView) findViewById(R.id.textViewQuestion);
-		TextView textViewElapsedTime = (TextView) findViewById(R.id.textViewElapsedTime);
-		TextView textViewAuthor = (TextView) findViewById(R.id.textViewAuthor);
-		TextView textViewAnswersCount = (TextView) findViewById(R.id.textViewAnswersCount);
-		textViewHeadLine.setText(question.getHeadline());
-		textViewQuestion.setText(question.getQuestion());
-		textViewElapsedTime.setText(String.format(getString(R.string.elapsedTime), question.getElapsedTime()));
-		textViewAuthor.setText(question.getFromUsername());
-		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), question.getAnswersCount()));
-		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
-		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) linearLayoutAnswers);
-		for (Answer answer : question.getAnswers()) {
-			
-		}
+//		TextView textViewHeadLine = (TextView) findViewById(R.id.textViewHeadline);
+//		TextView textViewQuestion = (TextView) findViewById(R.id.textViewQuestion);
+//		TextView textViewElapsedTime = (TextView) findViewById(R.id.textViewElapsedTime);
+//		TextView textViewAuthor = (TextView) findViewById(R.id.textViewAuthor);
+//		TextView textViewAnswersCount = (TextView) findViewById(R.id.textViewAnswersCount);
+//		textViewHeadLine.setText(question.getTitle());
+//		textViewQuestion.setText(question.getQuestionBody());
+//		textViewElapsedTime.setText(String.format(getString(R.string.elapsedTime), question.getElapsedTime()));
+//		textViewAuthor.setText(question.getFromUsername());
+//		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), question.getAnswersCount()));
+//		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
+//		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) linearLayoutAnswers);
+//		for (Answer answer : question.getAnswers()) {
+//			
+//		}
 		progressDialog.hide();
 	}
 

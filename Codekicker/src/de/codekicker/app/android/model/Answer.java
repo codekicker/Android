@@ -21,10 +21,7 @@ public class Answer implements Parcelable {
 	private String elapsedTime;
 	private int reputation;
 	
-	public Answer(String text,
-				  String username,
-				  String elapsedTime,
-				  int reputation) {
+	public Answer(String text, String username, String elapsedTime, int reputation) {
 		this.text = text;
 		this.username = username;
 		this.elapsedTime = elapsedTime;
