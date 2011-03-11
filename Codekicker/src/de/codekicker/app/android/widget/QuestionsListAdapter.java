@@ -55,8 +55,12 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 			linearLayoutTags.addView(frameLayoutTag);
 		}
 		textViewTitle.setText(question.getTitle());
-		String questionBody = question.getQuestionBody();
-		questionBody = questionBody.length() > 170 ? questionBody.substring(0, 170) : questionBody;
+		String questionBody = question.getQuestionBody().replace("\r\n", " ").replace("\n", " ");
+		if (questionBody.length() > 180) {
+			String shortedQuestionBody = questionBody.substring(0, 180);
+			int index = shortedQuestionBody.lastIndexOf(" ");
+			questionBody = shortedQuestionBody.substring(0, index) + "...";
+		}
 		textViewQuestionBody.setText(questionBody);
 		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
 		textViewAnswerCount.setText(Integer.toString(question.getAnswerCount()));
