@@ -35,7 +35,7 @@ public class QuestionListDownloader extends IntentService {
 		DataOutputStream dataOutputStream = null;
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
-			byte[] postParameters = "sortOrder=AskDateTime&filterMinID=1265".getBytes();
+			byte[] postParameters = "sortOrder=AskDateTime&filterMinID=0".getBytes();
 			URL url = new URL(DOWNLOAD_URL);
 			HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
 			httpUrlConnection.setRequestMethod("POST");
@@ -90,7 +90,7 @@ public class QuestionListDownloader extends IntentService {
 					tags[j] = jsonTags.getString(j);
 				}
 				JSONObject rawUserInfo = rawQuestion.getJSONObject("UserInfo");
-				User user = new User(rawUserInfo.getInt("ID"),
+				User user = new User(rawUserInfo.optInt("ID", -1),
 						rawUserInfo.getString("Name"),
 						rawUserInfo.getString("UrlName"),
 						rawUserInfo.getInt("Reputation"));
