@@ -14,11 +14,10 @@
 			android:id="@+id/textViewQuestionBody"
 			style="@style/QuestionsList.QuestionBody"
 			android:text="Question"/>
-	<LinearLayout android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:orientation="horizontal"
-				android:id="@+id/linearLayoutTags"
-				android:layout_marginBottom="5sp" />
+	<de.codekicker.app.android.widget.FlowLayout android:layout_height="wrap_content"
+												android:layout_width="fill_parent"
+												android:id="@+id/flowLayoutTags"
+												android:layout_marginBottom="5sp" />
 	<LinearLayout android:layout_height="wrap_content"
 				android:layout_width="fill_parent"
 				android:orientation="horizontal"

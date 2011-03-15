@@ -1,6 +1,7 @@
 package de.codekicker.app.android.widget;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -46,13 +47,13 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		TextView textViewAnswerCount = (TextView) listItemView.findViewById(R.id.textViewAnswerCount);
 		TextView textViewViewCount = (TextView) listItemView.findViewById(R.id.textViewViewCount);
 		TextView textViewAskDate = (TextView) listItemView.findViewById(R.id.textViewAskDate);
-		LinearLayout linearLayoutTags = (LinearLayout) listItemView.findViewById(R.id.linearLayoutTags);
-		linearLayoutTags.removeAllViews();
+		FlowLayout flowLayoutTags = (FlowLayout) listItemView.findViewById(R.id.flowLayoutTags);
+		flowLayoutTags.removeAllViews();
 		for (String tag : question.getTags()) {
 			FrameLayout frameLayoutTag = (FrameLayout) inflater.inflate(R.layout.questions_list_tag, null);
 			TextView textViewTag = (TextView) frameLayoutTag.getChildAt(0);
 			textViewTag.setText(tag);
-			linearLayoutTags.addView(frameLayoutTag);
+			flowLayoutTags.addView(frameLayoutTag);
 		}
 		textViewTitle.setText(question.getTitle());
 		String questionBody = question.getQuestionBody().replace("\r\n", " ").replace("\n", " ");
@@ -65,6 +66,7 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
 		textViewAnswerCount.setText(Integer.toString(question.getAnswerCount()));
 		textViewViewCount.setText(Integer.toString(question.getViewCount()));
+		Date askDate = question.getAskDate();
 		textViewAskDate.setText(String.format(resources.getString(R.string.askDate), question.getAskDate()));
 		return listItemView;
 	}
