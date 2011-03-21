@@ -5,7 +5,6 @@
 	<string name="answer">Antwort</string>
 	<string name="answers">Antworten</string>
 	<string name="views">Aufrufe</string>
-	<string name="askDate">vor %1$s</string>
 	<string name="profile">Profil</string>
 	<string name="settings">Einstellungen</string>
 	<string name="refresh">Aktualisieren</string>
@@ -13,4 +12,5 @@
 	<string name="yourAnswer">Deine Antwort</string>
 	<string name="answerQuestion">Antworten</string>
 	<string name="answersCount">%1$s Antworten</string>
+	<string name="askDate">%1$s\n%2$s</string>
 </resources>

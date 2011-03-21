@@ -48,6 +48,12 @@ public class QuestionList extends ListActivity {
 		registerForContextMenu(getListView());
 		downloadQuestions();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(questionsDownloadedReceiver);
+	}
 
 	@Override
 	protected void onListItemClick(ListView listView, View view, int position, long id) {

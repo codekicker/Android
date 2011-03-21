@@ -1,17 +1,16 @@
 package de.codekicker.app.android.widget;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
@@ -34,7 +33,6 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Resources resources = context.getResources();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View listItemView = convertView;
 		if (listItemView == null) {
@@ -67,7 +65,10 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		textViewAnswerCount.setText(Integer.toString(question.getAnswerCount()));
 		textViewViewCount.setText(Integer.toString(question.getViewCount()));
 		Date askDate = question.getAskDate();
-		textViewAskDate.setText(String.format(resources.getString(R.string.askDate), question.getAskDate()));
+		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(askDate);
+		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(askDate);
+		askDateString = String.format(context.getString(R.string.askDate), askDateString, askTimeString);
+		textViewAskDate.setText(askDateString);
 		return listItemView;
 	}
 }
