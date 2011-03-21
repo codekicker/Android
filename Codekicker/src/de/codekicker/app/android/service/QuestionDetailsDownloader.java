@@ -1,26 +1,21 @@
 package de.codekicker.app.android.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.codekicker.app.android.model.Answer;
-import de.codekicker.app.android.model.Question;
-
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import de.codekicker.app.android.model.Answer;
+import de.codekicker.app.android.model.Question;
 
 public class QuestionDetailsDownloader extends IntentService {
 	private static final String TAG = "QuestionDetailsDownloader";
-	private static final String DOWNLOAD_URL = "http://android.echooff.de/codekicker_question_details_mock.php?questionId=%s";
+	private static final String DOWNLOAD_URL = "http://codekicker.de/api/v1/QuestionView.json";
 
 	public QuestionDetailsDownloader() {
 		super(TAG);
@@ -30,32 +25,15 @@ public class QuestionDetailsDownloader extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		Log.v(TAG, "Downloading question details");
 		Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
-		BufferedReader bufferedReader = null;
 		try {
-			URL url = new URL(String.format(DOWNLOAD_URL, question.getId()));
-			InputStream inputStream = url.openStream();
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			bufferedReader = new BufferedReader(inputStreamReader);
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line);
-			}
-			String json = stringBuilder.toString();
-			Log.v(TAG, json);
+			byte[] postParameters = ("id=" + question.getId()).getBytes();
+			JSONDownloader jsonDownloader = new JSONDownloader();
+			String json = jsonDownloader.downloadJSON(DOWNLOAD_URL, postParameters);
 			createQuestion(json, question);
 		} catch (MalformedURLException e) {
 			Log.e(TAG, e.getMessage(), e);
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);
-		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					Log.e(TAG, e.getMessage(), e);
-				}
-			}
 		}
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED");
 		broadcastIntent.putExtra("de.codekicker.app.android.Question", question);

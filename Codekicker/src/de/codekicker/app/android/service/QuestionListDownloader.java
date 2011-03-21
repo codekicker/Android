@@ -1,12 +1,9 @@
 package de.codekicker.app.android.service;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -31,44 +28,16 @@ public class QuestionListDownloader extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Log.v(TAG, "Downloading questions");
-		BufferedReader bufferedReader = null;
-		DataOutputStream dataOutputStream = null;
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
 			byte[] postParameters = "sortOrder=AskDateTime&filterMinID=0".getBytes();
-			URL url = new URL(DOWNLOAD_URL);
-			HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-			httpUrlConnection.setRequestMethod("POST");
-			httpUrlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			httpUrlConnection.setRequestProperty("Content-Length", Integer.toString(postParameters.length));
-			httpUrlConnection.setRequestProperty("CK-App-ID", "codekicker.official-app.v1.0");
-			httpUrlConnection.setDoOutput(true);
-			dataOutputStream = new DataOutputStream(httpUrlConnection.getOutputStream());
-			dataOutputStream.write(postParameters, 0, postParameters.length);
-			dataOutputStream.flush();
-			InputStreamReader inputStreamReader = new InputStreamReader(httpUrlConnection.getInputStream());
-			bufferedReader = new BufferedReader(inputStreamReader);
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line);
-			}
-			String json = stringBuilder.toString();
-			Log.v(TAG, json);
+			JSONDownloader jsonDownloader = new JSONDownloader();
+			String json = jsonDownloader.downloadJSON(DOWNLOAD_URL, postParameters);
 			questions = createQuestions(json);
 		} catch (MalformedURLException e) {
 			Log.e(TAG, e.getMessage(), e);
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);
-		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-					dataOutputStream.close();
-				} catch (IOException e) {
-					Log.e(TAG, e.getMessage(), e);
-				}
-			}
 		}
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED");
 		broadcastIntent.putParcelableArrayListExtra("de.codekicker.app.android.Questions", questions);
@@ -94,10 +63,12 @@ public class QuestionListDownloader extends IntentService {
 						rawUserInfo.getString("Name"),
 						rawUserInfo.getString("UrlName"),
 						rawUserInfo.getInt("Reputation"));
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date askDateTime = simpleDateFormat.parse(rawQuestion.getString("AskDateTime"));
 				Question question = new Question(rawQuestion.getInt("ID"),
 						rawQuestion.getString("Title"),
 						rawQuestion.getString("UrlName"),
-						new Date(),
+						askDateTime,
 						rawQuestion.getString("QuestionBody"),
 						rawQuestion.getBoolean("HasAcceptedAnswer"),
 						rawQuestion.getInt("VoteScore"),
@@ -108,6 +79,8 @@ public class QuestionListDownloader extends IntentService {
 				questions.add(question);
 			}
 		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (ParseException e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
 		return questions;
