@@ -27,7 +27,7 @@ public final class R {
         public static final int flowLayoutTags=0x7f070012;
         public static final int imageButtonDownvote=0x7f070003;
         public static final int imageButtonUpvote=0x7f070001;
-        public static final int imageView1=0x7f070007;
+        public static final int imageViewGravatar=0x7f070007;
         public static final int linearLayoutAnswers=0x7f07000e;
         public static final int linearLayoutAuthor=0x7f070005;
         public static final int menuItemPreferences=0x7f070015;
@@ -61,6 +61,7 @@ public final class R {
         public static final int answersCount=0x7f04000b;
         public static final int app_name=0x7f040000;
         public static final int askDate=0x7f04000c;
+        public static final int guest=0x7f04000d;
         public static final int profile=0x7f040005;
         public static final int refresh=0x7f040007;
         public static final int refreshingData=0x7f040008;

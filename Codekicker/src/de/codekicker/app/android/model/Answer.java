@@ -1,8 +1,9 @@
 package de.codekicker.app.android.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -24,9 +25,9 @@ public class Answer implements Parcelable {
 	private String textBody;
 	private boolean isAccepted;
 	private User user;
-	private Iterable<Comment> comments;
+	private List<Comment> comments;
 
-	public Answer(Date createDate, String textBody, boolean isAccepted, User user, Iterable<Comment> comments) {
+	public Answer(Date createDate, String textBody, boolean isAccepted, User user, List<Comment> comments) {
 		this.createDate = createDate;
 		this.textBody = textBody;
 		this.isAccepted = isAccepted;
@@ -39,9 +40,8 @@ public class Answer implements Parcelable {
 		textBody = parcel.readString();
 		isAccepted = parcel.readInt() == 1;
 		user = parcel.readParcelable(User.class.getClassLoader());
-		ArrayList<Comment> comments = new ArrayList<Comment>();
+		comments = new ArrayList<Comment>();
 		parcel.readTypedList(comments, Comment.CREATOR);
-		this.comments = comments;
 	}
 
 	public Date getCreateDate() {
@@ -60,8 +60,8 @@ public class Answer implements Parcelable {
 		return user;
 	}
 
-	public Iterable<Comment> getComments() {
-		return comments;
+	public List<Comment> getComments() {
+		return Collections.unmodifiableList(comments);
 	}
 
 	@Override
@@ -75,6 +75,6 @@ public class Answer implements Parcelable {
 		dest.writeString(textBody);
 		dest.writeInt(isAccepted ? 1 : 0);
 		dest.writeParcelable(user, flags);
-		dest.writeList(Arrays.asList(comments));
+		dest.writeTypedList(comments);
 	}
 }

@@ -136,6 +136,6 @@ public class Question implements Parcelable {
 		dest.writeInt(viewCount);
 		dest.writeStringArray(tags);
 		dest.writeParcelable(user, flags);
-		dest.writeList(answers);
+		dest.writeTypedList(answers);
 	}
 }

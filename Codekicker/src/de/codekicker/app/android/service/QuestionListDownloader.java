@@ -60,8 +60,9 @@ public class QuestionListDownloader extends IntentService {
 					tags[j] = jsonTags.getString(j);
 				}
 				JSONObject rawUserInfo = rawQuestion.getJSONObject("UserInfo");
+				String userName = rawUserInfo.getString("Name");
 				User user = new User(rawUserInfo.optInt("ID", -1),
-						rawUserInfo.getString("Name"),
+						userName.equalsIgnoreCase("null") ? null : userName,
 						rawUserInfo.getString("UrlName"),
 						rawUserInfo.getInt("Reputation"),
 						rawUserInfo.getString("GravatarID"));

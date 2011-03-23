@@ -1,5 +1,6 @@
 package de.codekicker.app.android.model;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,14 +21,20 @@ public class User implements Parcelable {
 	private String name;
 	private String urlName;
 	private int reputation;
-	private String gravatarID;
+	private String gravatarHash;
+	private Bitmap gravatar;
 	
-	public User(int id, String name, String urlName, int reputation, String gravatarID) {
+	public User(int id, String name, String urlName, int reputation, String gravatarHash) {
+		this(id, name, urlName, reputation, gravatarHash, null);
+	}
+	
+	public User(int id, String name, String urlName, int reputation, String gravatarHash, Bitmap gravatar) {
 		this.id = id;
 		this.name = name;
 		this.urlName = urlName;
 		this.reputation = reputation;
-		this.gravatarID = gravatarID;
+		this.gravatarHash = gravatarHash;
+		this.gravatar = gravatar;
 	}
 	
 	private User(Parcel parcel) {
@@ -35,7 +42,8 @@ public class User implements Parcelable {
 		name = parcel.readString();
 		urlName = parcel.readString();
 		reputation = parcel.readInt();
-		gravatarID = parcel.readString();
+		gravatarHash = parcel.readString();
+		gravatar = parcel.readParcelable(Bitmap.class.getClassLoader());
 	}
 	
 	public int getId() {
@@ -54,8 +62,16 @@ public class User implements Parcelable {
 		return reputation;
 	}
 	
-	public String getGravatarID() {
-		return gravatarID;
+	public String getGravatarHash() {
+		return gravatarHash;
+	}
+	
+	public Bitmap getGravatar() {
+		return gravatar;
+	}
+	
+	public void setGravatar(Bitmap gravatar) {
+		this.gravatar = gravatar;
 	}
 
 	@Override
@@ -69,6 +85,7 @@ public class User implements Parcelable {
 		dest.writeString(name);
 		dest.writeString(urlName);
 		dest.writeInt(reputation);
-		dest.writeString(gravatarID);
+		dest.writeString(gravatarHash);
+		dest.writeParcelable(gravatar, flags);
 	}
 }

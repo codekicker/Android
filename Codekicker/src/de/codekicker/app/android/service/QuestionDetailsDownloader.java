@@ -50,8 +50,13 @@ public class QuestionDetailsDownloader extends IntentService {
 	private void createQuestion(String json, Question question) {
 		try {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			GravatarBitmapDownloader bitmapDownloader = new GravatarBitmapDownloader();
+			User questionUser = question.getUser();
+			Log.v(TAG, "Downloading question Gravatar Bitmap");
+			questionUser.setGravatar(bitmapDownloader.downloadBitmap(questionUser.getGravatarHash()));
 			JSONObject jsonObject = new JSONObject(json);
 			JSONArray rawAnswers = jsonObject.getJSONArray("Answers");
+			Log.v(TAG, "Creating Answers");
 			for (int i = 0; i < rawAnswers.length(); i++) {
 				JSONObject rawAnswer = rawAnswers.getJSONObject(i);
 				if (rawAnswer.getBoolean("IsQuestion"))
@@ -62,11 +67,14 @@ public class QuestionDetailsDownloader extends IntentService {
 				for (int j = 0; j < jsonCommentsLength; j++) {
 					JSONObject rawComment = jsonComments.getJSONObject(j);
 					JSONObject rawUser = rawComment.getJSONObject("User");
+					String userName = rawUser.getString("Name");
+					String gravatarId = rawUser.getString("GravatarID");
 					User user = new User(rawUser.optInt("ID", -1),
-							rawUser.getString("Name"),
+							userName.equalsIgnoreCase("null") ? null : userName,
 							rawUser.getString("UrlName"),
 							rawUser.getInt("Reputation"),
-							rawUser.getString("GravatarID"));
+							gravatarId,
+							bitmapDownloader.downloadBitmap(gravatarId));
 					Date createDate = simpleDateFormat.parse(rawComment.getString("CreateDateTime"));
 					Comment comment = new Comment(createDate,
 							rawComment.getString("TextBody"),
@@ -74,11 +82,14 @@ public class QuestionDetailsDownloader extends IntentService {
 					comments.add(comment);
 				}
 				JSONObject rawUserInfo = rawAnswer.getJSONObject("User");
+				String userName = rawUserInfo.getString("Name");
+				String gravatarId = rawUserInfo.getString("GravatarID");
 				User user = new User(rawUserInfo.optInt("ID", -1),
-						rawUserInfo.getString("Name"),
+						userName.equalsIgnoreCase("null") ? null : userName,
 						rawUserInfo.getString("UrlName"),
 						rawUserInfo.getInt("Reputation"),
-						rawUserInfo.getString("GravatarID"));
+						gravatarId,
+						bitmapDownloader.downloadBitmap(gravatarId));
 				Date createDateTime = simpleDateFormat.parse(rawAnswer.getString("CreateDateTime"));
 				Answer answer = new Answer(createDateTime,
 						rawAnswer.getString("TextBody"),

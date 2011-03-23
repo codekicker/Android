@@ -13,4 +13,5 @@
 	<string name="answerQuestion">Antworten</string>
 	<string name="answersCount">%1$s Antworten</string>
 	<string name="askDate">%1$s\n%2$s</string>
+	<string name="guest">Neues Mitglied</string>
 </resources>

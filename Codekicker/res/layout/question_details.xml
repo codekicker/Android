@@ -40,10 +40,10 @@
 			<ImageView android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:src="@drawable/icon"
-					android:id="@+id/imageView1" />
+					android:id="@+id/imageViewGravatar" />
 			<TextView android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="Logdog82" android:id="@+id/textViewUserName"/>
+					android:id="@+id/textViewUserName"/>
 			<TextView android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="195"
