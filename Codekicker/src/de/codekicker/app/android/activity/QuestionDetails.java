@@ -7,21 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
-import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.service.QuestionDetailsDownloader;
-import de.codekicker.app.android.service.QuestionListDownloader;
 
 public class QuestionDetails extends Activity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
@@ -51,24 +44,20 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		setContentView(R.layout.question_details);
 	}
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(questionDownloadedReceiver);
+	}
+	
 	private void questionDownloaded(Question question) {
 		Log.v(TAG, "Fill view");
-//		TextView textViewHeadLine = (TextView) findViewById(R.id.textViewHeadline);
-//		TextView textViewQuestion = (TextView) findViewById(R.id.textViewQuestion);
-//		TextView textViewElapsedTime = (TextView) findViewById(R.id.textViewElapsedTime);
-//		TextView textViewAuthor = (TextView) findViewById(R.id.textViewAuthor);
-//		TextView textViewAnswersCount = (TextView) findViewById(R.id.textViewAnswersCount);
-//		textViewHeadLine.setText(question.getTitle());
-//		textViewQuestion.setText(question.getQuestionBody());
-//		textViewElapsedTime.setText(String.format(getString(R.string.elapsedTime), question.getElapsedTime()));
-//		textViewAuthor.setText(question.getFromUsername());
-//		textViewAnswersCount.setText(String.format(getString(R.string.answersCount), question.getAnswersCount()));
-//		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
-//		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		layoutInflater.inflate(R.layout.question_details_answer, (ViewGroup) linearLayoutAnswers);
-//		for (Answer answer : question.getAnswers()) {
-//			
-//		}
+		TextView textViewTitle = (TextView) findViewById(R.id.textViewTitle);
+		TextView textViewQuestionBody = (TextView) findViewById(R.id.textViewQuestionBody);
+		TextView textViewVoteScore = (TextView) findViewById(R.id.textViewVoteScore);
+		textViewTitle.setText(question.getTitle());
+		textViewQuestionBody.setText(question.getQuestionBody());
+		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
 		progressDialog.hide();
 	}
 

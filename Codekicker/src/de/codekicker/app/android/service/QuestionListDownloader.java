@@ -47,6 +47,7 @@ public class QuestionListDownloader extends IntentService {
 	private ArrayList<Question> createQuestions(String json) {
 		Log.v(TAG, "Creating question models");
 		ArrayList<Question> questions = new ArrayList<Question>();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			JSONObject jsonObject = new JSONObject(json);
 			JSONArray rawQuestions = jsonObject.getJSONArray("Questions");
@@ -62,8 +63,8 @@ public class QuestionListDownloader extends IntentService {
 				User user = new User(rawUserInfo.optInt("ID", -1),
 						rawUserInfo.getString("Name"),
 						rawUserInfo.getString("UrlName"),
-						rawUserInfo.getInt("Reputation"));
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						rawUserInfo.getInt("Reputation"),
+						rawUserInfo.getString("GravatarID"));
 				Date askDateTime = simpleDateFormat.parse(rawQuestion.getString("AskDateTime"));
 				Question question = new Question(rawQuestion.getInt("ID"),
 						rawQuestion.getString("Title"),
