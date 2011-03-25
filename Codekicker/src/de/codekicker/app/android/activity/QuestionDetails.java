@@ -11,12 +11,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
+import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.service.QuestionDetailsDownloader;
@@ -78,6 +81,7 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		TextView textViewVoteScore = (TextView) findViewById(R.id.textViewVoteScore);
 		ImageView imageViewGravatar = (ImageView) findViewById(R.id.imageViewGravatar);
 		TextView textViewUserName = (TextView) findViewById(R.id.textViewUserName);
+		TextView textViewReputation = (TextView) findViewById(R.id.textViewReputation);
 		TextView textViewAnswerCount = (TextView) findViewById(R.id.textViewAnswerCount);
 		textViewTitle.setText(question.getTitle());
 		textViewQuestionBody.setText(question.getQuestionBody());
@@ -89,7 +93,14 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
 		imageViewGravatar.setImageBitmap(user.getGravatar());
 		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
+		textViewReputation.setText(Integer.toString(user.getReputation()));
 		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), question.getAnswerCount()));
+		LayoutInflater layoutInflater = getLayoutInflater();
+		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
+		for (Answer answer : question.getAnswers()) {
+			LinearLayout linearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, linearLayoutAnswers);
+			
+		}
 	}
 
 	@Override

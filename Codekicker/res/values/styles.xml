@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="QuestionsList">
+	<style name="Application">
 		<item name="android:background">#FFFFFF</item>
 		<item name="android:textColor">#000000</item>
 	</style>
+	<style name="QuestionsList" parent="Application" />
 	<style name="QuestionsList.Title">
 		<item name="android:textColor">#0071bc</item>
 		<item name="android:textStyle">bold</item>
@@ -63,8 +64,10 @@
 		<item name="android:background">#000000</item>
 		<item name="android:layout_margin">5sp</item>
 	</style>
-	<style name="QuestionDetails.BadgeBronze">
-		<item name="android:textColor">#9c6964</item>
+	<style name="QuestionDetails.User">
+		<item name="android:layout_marginRight">10sp</item>
+	</style>
+	<style name="QuestionDetails.User.Reputation">
 		<item name="android:textStyle">bold</item>
 	</style>
 </resources>
