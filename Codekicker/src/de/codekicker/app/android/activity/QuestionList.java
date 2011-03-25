@@ -1,5 +1,7 @@
 package de.codekicker.app.android.activity;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -23,18 +25,16 @@ public class QuestionList extends ListActivity {
 	private static final String TAG = "QuestionList";
 	private QuestionsListAdapter listAdapter;
 	private ProgressDialog progressDialog;
+	Question[] questions;
 	private BroadcastReceiver questionsDownloadedReceiver = new BroadcastReceiver() {
 		private static final String TAG = "QuestionsDownloadedReceiver";
 		
 		@Override
 		public void onReceive(Context context, final Intent intent) {
-			Log.v(TAG, "Adding questions to list");
-			// Avoid multiple notifications to the view
-			listAdapter.setNotifyOnChange(false);
-			for (Parcelable p : intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions")) {
-				listAdapter.add((Question) p);
-			}
-			listAdapter.notifyDataSetChanged();
+			Log.v(TAG, "Questions downloaded");
+			ArrayList<Parcelable> parcelables = intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions");
+			questions = parcelables.toArray(new Question[0]);
+			fillList();
 			progressDialog.hide();
 		}
 	};
@@ -46,13 +46,24 @@ public class QuestionList extends ListActivity {
 		listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
 		setListAdapter(listAdapter);
 		registerForContextMenu(getListView());
-		downloadQuestions();
+		Object nonConfigurationInstance = getLastNonConfigurationInstance();
+		if (nonConfigurationInstance == null) {
+			downloadQuestions();
+		} else {
+			questions = (Question[]) nonConfigurationInstance;
+			fillList();
+		}
 	}
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(questionsDownloadedReceiver);
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return questions;
 	}
 
 	@Override
@@ -92,5 +103,15 @@ public class QuestionList extends ListActivity {
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
 		Intent intent = new Intent(this, QuestionListDownloader.class);
 		startService(intent);
+	}
+	
+	private void fillList() {
+		Log.v(TAG, "Adding questions to list");
+		// Avoid multiple notifications to the view
+		listAdapter.setNotifyOnChange(false);
+		for (Question p : questions) {
+			listAdapter.add(p);
+		}
+		listAdapter.notifyDataSetChanged();
 	}
 }
