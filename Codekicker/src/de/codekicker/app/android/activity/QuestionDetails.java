@@ -26,27 +26,36 @@ public class QuestionDetails extends Activity implements OnClickListener {
 	private ProgressDialog progressDialog;
 	private ImageButton imageButtonUpvote;
 	private ImageButton imageButtonDownvote;
+	private Question question;
 	private BroadcastReceiver questionDownloadedReceiver = new BroadcastReceiver() {
 		private static final String TAG = "QuestionDownloadedReceiver";
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.v(TAG, "Broadcast received");
-			Question question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
+			question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
 			setContentView(R.layout.question_details);
-			questionDownloaded(question);
+			fillView(question);
+			progressDialog.hide();
 		}
 	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
 		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
-		Question question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
-		Intent intent = new Intent(this, QuestionDetailsDownloader.class);
-		intent.putExtra("de.codekicker.app.android.Question", question);
-		startService(intent);
+		Object nonConfigurationInstance = getLastNonConfigurationInstance();
+		if (nonConfigurationInstance == null) {
+			progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
+			Question question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
+			Intent intent = new Intent(this, QuestionDetailsDownloader.class);
+			intent.putExtra("de.codekicker.app.android.Question", question);
+			startService(intent);
+		} else {
+			question = (Question) nonConfigurationInstance;
+			setContentView(R.layout.question_details);
+			fillView(question);
+		}
 	}
 	
 	@Override
@@ -55,7 +64,12 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		unregisterReceiver(questionDownloadedReceiver);
 	}
 	
-	private void questionDownloaded(Question question) {
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return question;
+	}
+	
+	private void fillView(Question question) {
 		Log.v(TAG, "Fill view");
 		User user = question.getUser();
 		TextView textViewTitle = (TextView) findViewById(R.id.textViewTitle);
@@ -76,7 +90,6 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		imageViewGravatar.setImageBitmap(user.getGravatar());
 		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
 		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), question.getAnswerCount()));
-		progressDialog.hide();
 	}
 
 	@Override

@@ -29,7 +29,11 @@
 							style="@style/QuestionDetails.VoteButton"
 							android:src="@drawable/downvote" />
 			</LinearLayout>
-			<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/textViewQuestionBody" android:text="Question" />
+			<TextView android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/textViewQuestionBody"
+					android:text="Question"
+					style="@style/QuestionDetails" />
 		</LinearLayout>
 		<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/linearLayoutAuthor" android:gravity="bottom|right">
 			<TextView android:layout_height="wrap_content"
