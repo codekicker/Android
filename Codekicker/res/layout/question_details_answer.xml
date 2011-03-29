@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+		<LinearLayout android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+			<LinearLayout android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="vertical">
+				<ImageButton android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:id="@+id/imageButtonUpvote"
+							style="@style/QuestionDetails.VoteButton"
+							android:src="@drawable/upvote" />
+				<TextView android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="0"
+						style="@style/QuestionDetails.Votes" android:id="@+id/textViewVoteScore"/>
+				<ImageButton android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:id="@+id/imageButtonDownvote"
+							style="@style/QuestionDetails.VoteButton"
+							android:src="@drawable/downvote" />
+			</LinearLayout>
+			<TextView android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/textViewQuestionBody"
+					android:text="Question"
+					style="@style/QuestionDetails" />
+		</LinearLayout>
+		<LinearLayout android:layout_height="wrap_content"
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					style="@style/Application">
-    <TextView android:text="TextView" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+					android:id="@+id/linearLayoutAuthor"
+					android:gravity="right|center_vertical">
+			<TextView android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:id="@+id/textViewAskDate"
+					android:text="@string/askDate"
+					style="@style/QuestionDetails.User" />
+			<ImageView android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:src="@drawable/icon"
+					android:id="@+id/imageViewGravatar"
+					style="@style/QuestionDetails.User" />
+			<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/textViewUserName"
+					android:text="Logdog82"
+					style="@style/QuestionDetails.User"/>
+			<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="195"
+					android:id="@+id/textViewReputation"
+					style="@style/QuestionDetails.User.Reputation" />
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/answers">
+			<TextView android:layout_height="wrap_content"
+					android:layout_width="fill_parent"
+					android:text="@string/answersCount"
+					android:id="@+id/textViewAnswerCount"
+					style="@style/QuestionDetails.AnswerCount"/>
+		</LinearLayout>
+		<View style="@style/QuestionDetails.Divider" />
 </LinearLayout>

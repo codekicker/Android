@@ -16,6 +16,7 @@ import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
 
 public class QuestionsListAdapter extends ArrayAdapter<Question> {
+	private final LayoutInflater inflater;
 	private final Context context;
 	private final int listItemResourceId;
 	private final List<Question> questions;
@@ -26,6 +27,7 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 	
 	private QuestionsListAdapter(Context context, int listItemResourceId, List<Question> questions) {
 		super(context, listItemResourceId, questions);
+		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.context = context;
 		this.listItemResourceId = listItemResourceId;
 		this.questions = questions;
@@ -33,7 +35,6 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View listItemView = convertView;
 		if (listItemView == null) {
 			listItemView = inflater.inflate(listItemResourceId, null);

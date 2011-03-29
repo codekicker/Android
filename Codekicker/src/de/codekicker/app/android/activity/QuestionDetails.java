@@ -47,6 +47,7 @@ public class QuestionDetails extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
+		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
 			progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
@@ -73,34 +74,40 @@ public class QuestionDetails extends Activity implements OnClickListener {
 	}
 	
 	private void fillView(Question question) {
-		Log.v(TAG, "Fill view");
+		Log.v(TAG, "Filling view");
 		User user = question.getUser();
+		LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.rootLinearLayout);
 		TextView textViewTitle = (TextView) findViewById(R.id.textViewTitle);
-		TextView textViewQuestionBody = (TextView) findViewById(R.id.textViewQuestionBody);
-		TextView textViewAskDate = (TextView) findViewById(R.id.textViewAskDate);
-		TextView textViewVoteScore = (TextView) findViewById(R.id.textViewVoteScore);
-		ImageView imageViewGravatar = (ImageView) findViewById(R.id.imageViewGravatar);
-		TextView textViewUserName = (TextView) findViewById(R.id.textViewUserName);
-		TextView textViewReputation = (TextView) findViewById(R.id.textViewReputation);
-		TextView textViewAnswerCount = (TextView) findViewById(R.id.textViewAnswerCount);
 		textViewTitle.setText(question.getTitle());
-		textViewQuestionBody.setText(question.getQuestionBody());
-		Date askDate = question.getAskDate();
-		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(askDate);
-		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(askDate);
-		askDateString = String.format(getString(R.string.askDate), askDateString, askTimeString);
-		textViewAskDate.setText(askDateString);
-		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
-		imageViewGravatar.setImageBitmap(user.getGravatar());
-		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
-		textViewReputation.setText(Integer.toString(user.getReputation()));
-		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), question.getAnswerCount()));
+		foo(rootLinearLayout, question.getQuestionBody(), question.getAskDate(), question.getVoteScore(), question.getAnswerCount(), user);
 		LayoutInflater layoutInflater = getLayoutInflater();
 		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
 		for (Answer answer : question.getAnswers()) {
-			LinearLayout linearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, linearLayoutAnswers);
-			
+			LinearLayout answerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, null);
+			TextView textViewQuestionBody = (TextView) answerLinearLayout.findViewById(R.id.textViewQuestionBody);
+			textViewQuestionBody.setText(answer.getTextBody());
+			linearLayoutAnswers.addView(answerLinearLayout);
 		}
+	}
+	
+	private void foo(LinearLayout linearLayout, String questionBody, Date date, int voteScore, int answerCount, User user) {
+		TextView textViewQuestionBody = (TextView) linearLayout.findViewById(R.id.textViewQuestionBody);
+		TextView textViewaskDate = (TextView) linearLayout.findViewById(R.id.textViewAskDate);
+		TextView textViewVoteScore = (TextView) linearLayout.findViewById(R.id.textViewVoteScore);
+		ImageView imageViewGravatar = (ImageView) linearLayout.findViewById(R.id.imageViewGravatar);
+		TextView textViewUserName = (TextView) linearLayout.findViewById(R.id.textViewUserName);
+		TextView textViewReputation = (TextView) linearLayout.findViewById(R.id.textViewReputation);
+		TextView textViewAnswerCount = (TextView) linearLayout.findViewById(R.id.textViewAnswerCount);
+		textViewQuestionBody.setText(questionBody);
+		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
+		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
+		askDateString = String.format(getString(R.string.askDate), askDateString, askTimeString);
+		textViewaskDate.setText(askDateString);
+		textViewVoteScore.setText(Integer.toString(voteScore));
+		imageViewGravatar.setImageBitmap(user.getGravatar());
+		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
+		textViewReputation.setText(Integer.toString(user.getReputation()));
+		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), answerCount));
 	}
 
 	@Override
