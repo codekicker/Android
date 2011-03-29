@@ -23,8 +23,8 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 	public QuestionsListAdapter(Context context, int listItemResourceId) {
 		this(context, listItemResourceId, new ArrayList<Question>());
 	}
-
-	public QuestionsListAdapter(Context context, int listItemResourceId, List<Question> questions) {
+	
+	private QuestionsListAdapter(Context context, int listItemResourceId, List<Question> questions) {
 		super(context, listItemResourceId, questions);
 		this.context = context;
 		this.listItemResourceId = listItemResourceId;
