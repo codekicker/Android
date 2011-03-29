@@ -16,7 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 import de.codekicker.app.android.R;
+import de.codekicker.app.android.business.Network;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.service.QuestionListDownloader;
 import de.codekicker.app.android.widget.QuestionsListAdapter;
@@ -46,6 +48,7 @@ public class QuestionList extends ListActivity {
 		listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
 		setListAdapter(listAdapter);
 		registerForContextMenu(getListView());
+		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
 			downloadQuestions();
@@ -100,6 +103,12 @@ public class QuestionList extends ListActivity {
 	}
 
 	private void downloadQuestions() {
+		Network network = new Network(this);
+		if (!network.isOnline()) {
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+			finish();
+			return;
+		}
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
 		Intent intent = new Intent(this, QuestionListDownloader.class);
 		startService(intent);
