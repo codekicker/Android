@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import de.codekicker.app.android.business.JSONDownloader;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 

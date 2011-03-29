@@ -1,4 +1,4 @@
-package de.codekicker.app.android.service;
+package de.codekicker.app.android.business;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -13,7 +13,7 @@ import android.util.Log;
 public class JSONDownloader {
 	private static final String TAG = "JSONDownloader";
 
-	protected String downloadJSON(String spec, byte[] postParameters) throws MalformedURLException, IOException {
+	public String downloadJSON(String spec, byte[] postParameters) throws MalformedURLException, IOException {
 		Log.v(TAG, "Downloading JSON String");
 		BufferedReader bufferedReader = null;
 		DataOutputStream dataOutputStream = null;
