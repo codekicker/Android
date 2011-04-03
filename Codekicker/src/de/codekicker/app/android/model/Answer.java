@@ -21,12 +21,12 @@ public class Answer implements Parcelable {
 		}
 	};
 
-	private Date createDate;
-	private String textBody;
-	private boolean isAccepted;
-	private User user;
-	private List<Comment> comments;
-
+	private final Date createDate;
+	private final String textBody;
+	private final boolean isAccepted;
+	private final User user;
+	private final List<Comment> comments;
+	
 	public Answer(Date createDate, String textBody, boolean isAccepted, User user, List<Comment> comments) {
 		this.createDate = createDate;
 		this.textBody = textBody;

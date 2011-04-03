@@ -1,6 +1,7 @@
 package de.codekicker.app.android.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -114,8 +115,8 @@ public class Question implements Parcelable {
 		answers.add(answer);
 	}
 	
-	public Iterable<Answer> getAnswers() {
-		return answers;
+	public List<Answer> getAnswers() {
+		return Collections.unmodifiableList(answers);
 	}
 
 	@Override

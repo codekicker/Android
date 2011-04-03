@@ -3,7 +3,7 @@ package de.codekicker.app.android.activity;
 import java.text.DateFormat;
 import java.util.Date;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,14 +17,15 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
-import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.service.QuestionDetailsDownloader;
+import de.codekicker.app.android.widget.QuestionDetailsAdapter;
 
-public class QuestionDetails extends Activity implements OnClickListener {
+public class QuestionDetails extends ListActivity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
 	private ProgressDialog progressDialog;
 	private ImageButton imageButtonUpvote;
@@ -37,7 +38,6 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		public void onReceive(Context context, Intent intent) {
 			Log.v(TAG, "Broadcast received");
 			question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
-			setContentView(R.layout.question_details);
 			fillView(question);
 			progressDialog.hide();
 		}
@@ -57,7 +57,6 @@ public class QuestionDetails extends Activity implements OnClickListener {
 			startService(intent);
 		} else {
 			question = (Question) nonConfigurationInstance;
-			setContentView(R.layout.question_details);
 			fillView(question);
 		}
 	}
@@ -73,41 +72,46 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		return question;
 	}
 	
+	@Override
+	protected void onListItemClick(ListView listView, View view, int position, long id) {
+		super.onListItemClick(listView, view, position, id);
+	}
+	
 	private void fillView(Question question) {
 		Log.v(TAG, "Filling view");
 		User user = question.getUser();
-		LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.rootLinearLayout);
-		TextView textViewTitle = (TextView) findViewById(R.id.textViewTitle);
-		TextView textViewAnswerCount = (TextView) findViewById(R.id.textViewAnswerCount);
-		textViewTitle.setText(question.getTitle());
-		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), question.getAnswerCount()));
-		fillLinearLayout(rootLinearLayout, question.getQuestionBody(), question.getAskDate(), question.getVoteScore(), user);
-		rootLinearLayout.removeView(rootLinearLayout.findViewById(R.id.divider));
 		LayoutInflater layoutInflater = getLayoutInflater();
-		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
-		for (Answer answer : question.getAnswers()) {
-			LinearLayout answerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, linearLayoutAnswers, false);
-			//fillLinearLayout(answerLinearLayout, answer.getTextBody(), answer.getCreateDate(), 0, answer.getUser());
-			linearLayoutAnswers.addView(answerLinearLayout);
-		}
-	}
-	
-	private void fillLinearLayout(LinearLayout linearLayout, String questionBody, Date date, int voteScore, User user) {
-		TextView textViewQuestionBody = (TextView) linearLayout.findViewById(R.id.textViewQuestionBody);
-		TextView textViewaskDate = (TextView) linearLayout.findViewById(R.id.textViewAskDate);
-		TextView textViewVoteScore = (TextView) linearLayout.findViewById(R.id.textViewVoteScore);
-		ImageView imageViewGravatar = (ImageView) linearLayout.findViewById(R.id.imageViewGravatar);
-		TextView textViewUserName = (TextView) linearLayout.findViewById(R.id.textViewUserName);
-		TextView textViewReputation = (TextView) linearLayout.findViewById(R.id.textViewReputation);
-		textViewQuestionBody.setText(questionBody);
+		LinearLayout headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
+		LinearLayout footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
+		Date date = question.getAskDate();
 		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
 		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 		askDateString = String.format(getString(R.string.askDate), askDateString, askTimeString);
+		TextView textViewTitle = (TextView) headerLinearLayout.findViewById(R.id.textViewTitle);
+		TextView textViewVoteScore = (TextView) headerLinearLayout.findViewById(R.id.textViewVoteScore);
+		TextView textViewQuestionBody = (TextView) headerLinearLayout.findViewById(R.id.textViewQuestionBody);
+		TextView textViewaskDate = (TextView) headerLinearLayout.findViewById(R.id.textViewAskDate);
+		ImageView imageViewGravatar = (ImageView) headerLinearLayout.findViewById(R.id.imageViewGravatar);
+		TextView textViewUserName = (TextView) headerLinearLayout.findViewById(R.id.textViewUserName);
+		TextView textViewReputation = (TextView) headerLinearLayout.findViewById(R.id.textViewReputation);
+		TextView textViewAnswerCount = (TextView) headerLinearLayout.findViewById(R.id.textViewAnswerCount);
+		TextView textViewComments = (TextView) headerLinearLayout.findViewById(R.id.textViewComments);
+		textViewTitle.setText(question.getTitle());
+		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
+		textViewQuestionBody.setText(question.getQuestionBody());
 		textViewaskDate.setText(askDateString);
-		textViewVoteScore.setText(Integer.toString(voteScore));
 		imageViewGravatar.setImageBitmap(user.getGravatar());
-		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
+		textViewUserName.setText(user.getName());
 		textViewReputation.setText(Integer.toString(user.getReputation()));
+		int answerCountText = question.getAnswerCount() == 1 ? R.string.answerCount : R.string.answersCount;
+		textViewAnswerCount.setText(String.format(getString(answerCountText), question.getAnswerCount()));
+		int commentCountText = 0 == 1 ? R.string.commentCount : R.string.commentsCount;
+		textViewComments.setText(String.format(getString(commentCountText), 0));
+		ListView listView = getListView();
+		listView.addHeaderView(headerLinearLayout);
+		listView.addFooterView(footerLinearLayout);
+		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers());
+		setListAdapter(adapter);
 	}
 
 	@Override

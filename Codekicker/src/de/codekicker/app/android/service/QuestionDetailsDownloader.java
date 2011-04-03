@@ -69,13 +69,12 @@ public class QuestionDetailsDownloader extends IntentService {
 					JSONObject rawComment = jsonComments.getJSONObject(j);
 					JSONObject rawUser = rawComment.getJSONObject("User");
 					String userName = rawUser.getString("Name");
-					String gravatarId = rawUser.getString("GravatarID");
 					User user = new User(rawUser.optInt("ID", -1),
 							userName.equalsIgnoreCase("null") ? null : userName,
 							rawUser.getString("UrlName"),
 							rawUser.getInt("Reputation"),
-							gravatarId,
-							bitmapDownloader.downloadBitmap(gravatarId));
+							null,
+							null);
 					Date createDate = simpleDateFormat.parse(rawComment.getString("CreateDateTime"));
 					Comment comment = new Comment(createDate,
 							rawComment.getString("TextBody"),

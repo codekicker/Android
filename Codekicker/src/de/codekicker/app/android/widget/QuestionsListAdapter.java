@@ -44,6 +44,7 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		TextView textViewQuestionBody = (TextView) listItemView.findViewById(R.id.textViewQuestionBody);
 		TextView textViewVoteScore = (TextView) listItemView.findViewById(R.id.textViewVoteScore);
 		TextView textViewAnswerCount = (TextView) listItemView.findViewById(R.id.textViewAnswerCount);
+		TextView textViewAnswer = (TextView) listItemView.findViewById(R.id.textViewAnswer);
 		TextView textViewViewCount = (TextView) listItemView.findViewById(R.id.textViewViewCount);
 		TextView textViewAskDate = (TextView) listItemView.findViewById(R.id.textViewAskDate);
 		FlowLayout flowLayoutTags = (FlowLayout) listItemView.findViewById(R.id.flowLayoutTags);
@@ -63,7 +64,9 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
 		}
 		textViewQuestionBody.setText(questionBody);
 		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
+		int answerText = question.getAnswerCount() == 1 ? R.string.answer	: R.string.answers;
 		textViewAnswerCount.setText(Integer.toString(question.getAnswerCount()));
+		textViewAnswer.setText(context.getString(answerText));
 		textViewViewCount.setText(Integer.toString(question.getViewCount()));
 		Date askDate = question.getAskDate();
 		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(askDate);
