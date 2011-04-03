@@ -78,26 +78,27 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		User user = question.getUser();
 		LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.rootLinearLayout);
 		TextView textViewTitle = (TextView) findViewById(R.id.textViewTitle);
+		TextView textViewAnswerCount = (TextView) findViewById(R.id.textViewAnswerCount);
 		textViewTitle.setText(question.getTitle());
-		foo(rootLinearLayout, question.getQuestionBody(), question.getAskDate(), question.getVoteScore(), question.getAnswerCount(), user);
+		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), question.getAnswerCount()));
+		fillLinearLayout(rootLinearLayout, question.getQuestionBody(), question.getAskDate(), question.getVoteScore(), user);
+		rootLinearLayout.removeView(rootLinearLayout.findViewById(R.id.divider));
 		LayoutInflater layoutInflater = getLayoutInflater();
 		LinearLayout linearLayoutAnswers = (LinearLayout) findViewById(R.id.linearLayoutAnswers);
 		for (Answer answer : question.getAnswers()) {
-			LinearLayout answerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, null);
-			TextView textViewQuestionBody = (TextView) answerLinearLayout.findViewById(R.id.textViewQuestionBody);
-			textViewQuestionBody.setText(answer.getTextBody());
+			LinearLayout answerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_answer, linearLayoutAnswers, false);
+			//fillLinearLayout(answerLinearLayout, answer.getTextBody(), answer.getCreateDate(), 0, answer.getUser());
 			linearLayoutAnswers.addView(answerLinearLayout);
 		}
 	}
 	
-	private void foo(LinearLayout linearLayout, String questionBody, Date date, int voteScore, int answerCount, User user) {
+	private void fillLinearLayout(LinearLayout linearLayout, String questionBody, Date date, int voteScore, User user) {
 		TextView textViewQuestionBody = (TextView) linearLayout.findViewById(R.id.textViewQuestionBody);
 		TextView textViewaskDate = (TextView) linearLayout.findViewById(R.id.textViewAskDate);
 		TextView textViewVoteScore = (TextView) linearLayout.findViewById(R.id.textViewVoteScore);
 		ImageView imageViewGravatar = (ImageView) linearLayout.findViewById(R.id.imageViewGravatar);
 		TextView textViewUserName = (TextView) linearLayout.findViewById(R.id.textViewUserName);
 		TextView textViewReputation = (TextView) linearLayout.findViewById(R.id.textViewReputation);
-		TextView textViewAnswerCount = (TextView) linearLayout.findViewById(R.id.textViewAnswerCount);
 		textViewQuestionBody.setText(questionBody);
 		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
 		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
@@ -107,7 +108,6 @@ public class QuestionDetails extends Activity implements OnClickListener {
 		imageViewGravatar.setImageBitmap(user.getGravatar());
 		textViewUserName.setText(user.getName() != null ? user.getName() : getString(R.string.guest));
 		textViewReputation.setText(Integer.toString(user.getReputation()));
-		textViewAnswerCount.setText(String.format(getString(R.string.answersCount), answerCount));
 	}
 
 	@Override
