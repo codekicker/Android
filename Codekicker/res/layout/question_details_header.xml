@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			style="@style/Application"
+			android:orientation="vertical"
+			android:id="@+id/rootLinearLayout">
+	<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			style="@style/QuestionsList.Title"
+			android:id="@+id/textViewTitle" android:text="Title"/>
+	<include layout="@layout/question_details_list_item" />
+	<LinearLayout android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:id="@+id/answers">
+		<TextView android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:text="@string/answersCount"
+				android:id="@+id/textViewAnswerCount"
+				style="@style/QuestionDetails.AnswerCount"/>
+		<View style="@style/QuestionDetails.Divider" />
+	</LinearLayout>
+</LinearLayout>
