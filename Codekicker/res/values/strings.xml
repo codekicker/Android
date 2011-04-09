@@ -17,4 +17,8 @@
 	<string name="NetworkNotConnected">Verbindung kann nicht hergestellt werden</string>
 	<string name="commentsCount">%1$s Kommentare</string>
 	<string name="commentCount">%1$s Kommentar</string>
+	<string name="username">Benutzername</string>
+	<string name="password">Passwort</string>
+	<string name="successfulLoggedIn">Erfolgreich angemeldet</string>
+	<string name="errorCredentials">Benutzername und/oder Kennwort falsch</string>
 </resources>
