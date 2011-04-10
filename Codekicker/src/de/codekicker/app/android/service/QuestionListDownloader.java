@@ -1,7 +1,5 @@
 package de.codekicker.app.android.service;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,13 +12,14 @@ import org.json.JSONObject;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-import de.codekicker.app.android.business.JSONDownloader;
+import de.codekicker.app.android.business.ServerRequest;
+import de.codekicker.app.android.config.ConfigManager;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 
 public class QuestionListDownloader extends IntentService {
 	private static final String TAG = "QuestionListDownloader";
-	private static final String DOWNLOAD_URL = "http://codekicker.de/api/v1/QuestionList.json";
+	private static final String DOWNLOAD_URL = "QuestionList.json";
 	
 	public QuestionListDownloader() {
 		super(TAG);
@@ -31,13 +30,11 @@ public class QuestionListDownloader extends IntentService {
 		Log.v(TAG, "Downloading questions");
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
-			byte[] postParameters = "sortOrder=AskDateTime&filterMinID=0".getBytes();
-			JSONDownloader jsonDownloader = new JSONDownloader();
-			String json = jsonDownloader.downloadJSON(DOWNLOAD_URL, postParameters);
+			ConfigManager configManager = ConfigManager.getInstance(getApplicationContext());
+			ServerRequest serverRequest = new ServerRequest(configManager);
+			String json = serverRequest.downloadJSON(configManager.getApiBaseUrl() + DOWNLOAD_URL, "sortOrder=AskDateTime&filterMinID=0");
 			questions = createQuestions(json);
-		} catch (MalformedURLException e) {
-			Log.e(TAG, e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED");

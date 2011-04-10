@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 import de.codekicker.app.android.config.ConfigManager;
@@ -17,8 +16,8 @@ public class ServerRequest {
 	private static final String TAG = "ServerRequest";
 	private final ConfigManager configManager;
 	
-	public ServerRequest(Context context) {
-		configManager = new ConfigManager(context);
+	public ServerRequest(ConfigManager configManager) {
+		this.configManager = configManager;
 		if (!configManager.isConfigured()) {
 			configManager.configure();
 		}
