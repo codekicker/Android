@@ -20,6 +20,7 @@ import android.widget.Toast;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.business.Network;
 import de.codekicker.app.android.model.Question;
+import de.codekicker.app.android.preference.PreferenceManager;
 import de.codekicker.app.android.service.QuestionListDownloader;
 import de.codekicker.app.android.widget.QuestionsListAdapter;
 
@@ -47,11 +48,10 @@ public class QuestionList extends ListActivity {
 		registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
 		listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
 		setListAdapter(listAdapter);
-		registerForContextMenu(getListView());
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
-			downloadQuestions();
+			downloadQuestions(true);
 		} else {
 			questions = (Question[]) nonConfigurationInstance;
 			fillList();
@@ -83,30 +83,22 @@ public class QuestionList extends ListActivity {
 		inflater.inflate(R.menu.questions_list_options_menu, menu);
 		return true;
 	}
-
+	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menuItemProfile:
-			Log.v(TAG, "Profile menu item selected.");
-			return true;
-		case R.id.menuItemPreferences:
-			Log.v(TAG, "Preferences menu item selected.");
-			return true;
-		case R.id.menuItemRefresh:
-			Log.v(TAG, "Refresh menu item selected.");
-			downloadQuestions();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		PreferenceManager preferenceManager = PreferenceManager.getInstance(this);
+		MenuItem profileMenuItem = menu.findItem(R.id.menuItemProfile);
+		profileMenuItem.setEnabled(preferenceManager.getIsUserAuthenticated());
+		return true;
 	}
 
-	private void downloadQuestions() {
+	private void downloadQuestions(boolean finishIfOffline) {
 		Network network = new Network(this);
 		if (!network.isOnline()) {
 			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
-			finish();
+			if (finishIfOffline)
+				finish();
 			return;
 		}
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
@@ -122,5 +114,24 @@ public class QuestionList extends ListActivity {
 			listAdapter.add(p);
 		}
 		listAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuItemProfile:
+			Log.v(TAG, "Profile menu item selected.");
+			return true;
+		case R.id.menuItemPreferences:
+			Log.v(TAG, "Preferences menu item selected.");
+			startActivity(new Intent(this, Preferences.class));
+			return true;
+		case R.id.menuItemRefresh:
+			Log.v(TAG, "Refresh menu item selected.");
+			downloadQuestions(false);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

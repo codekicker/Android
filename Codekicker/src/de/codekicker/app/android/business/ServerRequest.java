@@ -9,41 +9,38 @@ import java.net.URL;
 
 import android.util.Base64;
 import android.util.Log;
-import de.codekicker.app.android.config.ConfigManager;
-import de.codekicker.app.android.config.NotConfiguredException;
 
 public class ServerRequest {
 	private static final String TAG = "ServerRequest";
-	private final ConfigManager configManager;
+	private final String appIdKey;
+	private final String appId;
 	
-	public ServerRequest(ConfigManager configManager) {
-		this.configManager = configManager;
-		if (!configManager.isConfigured()) {
-			configManager.configure();
-		}
+	public ServerRequest(String appIdKey, String appId) {
+		this.appIdKey = appIdKey;
+		this.appId = appId;
 	}
 	
-	public String downloadJSON(String url, String postParameters) throws IOException, NotConfiguredException {
-		Log.v(TAG, "Downloading JSON String");
+	public String downloadJSON(String url, String postParameters) throws IOException {
+		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
-	public String downloadJSON(String url, String postParameters, String username, String password) throws IOException, NotConfiguredException {
-		Log.v(TAG, "Downloading JSON String");
+	public String downloadJSON(String url, String postParameters, String username, String password) throws IOException {
+		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, username, password);
 	}
 	
-	public String send(String url, String postParameters) throws IOException, NotConfiguredException {
-		Log.v(TAG, "Sending data");
+	public String send(String url, String postParameters) throws IOException {
+		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
-	public String send(String url, String postParameters, String username, String password) throws IOException, NotConfiguredException {
-		Log.v(TAG, "Sending data");
+	public String send(String url, String postParameters, String username, String password) throws IOException {
+		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, username, password);
 	}
 	
-	private String makeRequest(String spec, String postParameters, String username, String password) throws IOException, NotConfiguredException {
+	private String makeRequest(String spec, String postParameters, String username, String password) throws IOException {
 		BufferedReader bufferedReader = null;
 		DataOutputStream dataOutputStream = null;
 		try {
@@ -52,7 +49,7 @@ public class ServerRequest {
 			HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
 			httpUrlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			httpUrlConnection.setRequestProperty("Content-Length", Integer.toString(params.length));
-			httpUrlConnection.setRequestProperty(configManager.getAppIdKey(), configManager.getAppId());
+			httpUrlConnection.setRequestProperty(appIdKey, appId);
 			httpUrlConnection.setRequestMethod("POST");
 			if (username != null && password != null) {
 				String authorizationString = (username + ":" + password);

@@ -18,7 +18,7 @@ public class PreferenceManager {
 	}
 	
 	public String getApiBaseUrl() {
-		return "http://codekicker.de/api/v1/";
+		return "http://dev.codekicker.de/api/v1/";
 	}
 	
 	public String getAppIdKey() {

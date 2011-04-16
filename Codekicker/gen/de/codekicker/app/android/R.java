@@ -25,13 +25,15 @@ public final class R {
         public static final int buttonAnswer=0x7f070001;
         public static final int editTextYourAnswer=0x7f070000;
         public static final int flowLayoutTags=0x7f070010;
-        public static final int imageButtonDownvote=0x7f070008;
-        public static final int imageButtonUpvote=0x7f070006;
+        public static final int imageViewDownvote=0x7f070008;
         public static final int imageViewGravatar=0x7f07000c;
+        public static final int imageViewUpvote=0x7f070006;
         public static final int linearLayoutAuthor=0x7f07000a;
-        public static final int menuItemPreferences=0x7f070014;
-        public static final int menuItemProfile=0x7f070013;
-        public static final int menuItemRefresh=0x7f070015;
+        public static final int menuItemDownvote=0x7f070014;
+        public static final int menuItemPreferences=0x7f070016;
+        public static final int menuItemProfile=0x7f070015;
+        public static final int menuItemRefresh=0x7f070017;
+        public static final int menuItemUpvote=0x7f070013;
         public static final int rootLinearLayout=0x7f070002;
         public static final int textViewAnswer=0x7f070011;
         public static final int textViewAnswerCount=0x7f070005;
@@ -45,14 +47,16 @@ public final class R {
         public static final int textViewVoteScore=0x7f070007;
     }
     public static final class layout {
-        public static final int question_details_footer=0x7f030000;
-        public static final int question_details_header=0x7f030001;
-        public static final int question_details_list_item=0x7f030002;
-        public static final int questions_list_item=0x7f030003;
-        public static final int questions_list_tag=0x7f030004;
+        public static final int preferences=0x7f030000;
+        public static final int question_details_footer=0x7f030001;
+        public static final int question_details_header=0x7f030002;
+        public static final int question_details_list_item=0x7f030003;
+        public static final int questions_list_item=0x7f030004;
+        public static final int questions_list_tag=0x7f030005;
     }
     public static final class menu {
-        public static final int questions_list_options_menu=0x7f060000;
+        public static final int questions_details_context_menu=0x7f060000;
+        public static final int questions_list_options_menu=0x7f060001;
     }
     public static final class string {
         public static final int NetworkNotConnected=0x7f04000e;
@@ -64,11 +68,17 @@ public final class R {
         public static final int askDate=0x7f04000c;
         public static final int commentCount=0x7f040010;
         public static final int commentsCount=0x7f04000f;
+        public static final int downvote=0x7f040016;
+        public static final int errorCredentials=0x7f040014;
         public static final int guest=0x7f04000d;
+        public static final int password=0x7f040012;
         public static final int profile=0x7f040005;
         public static final int refresh=0x7f040007;
         public static final int refreshingData=0x7f040008;
         public static final int settings=0x7f040006;
+        public static final int successfulLoggedIn=0x7f040013;
+        public static final int upvote=0x7f040015;
+        public static final int username=0x7f040011;
         public static final int views=0x7f040004;
         public static final int voteScore=0x7f040001;
         public static final int yourAnswer=0x7f040009;
@@ -81,7 +91,7 @@ public final class R {
         public static final int QuestionDetails_Divider=0x7f05000d;
         public static final int QuestionDetails_User=0x7f05000e;
         public static final int QuestionDetails_User_Reputation=0x7f05000f;
-        public static final int QuestionDetails_VoteButton=0x7f05000a;
+        public static final int QuestionDetails_VoteImage=0x7f05000a;
         public static final int QuestionDetails_Votes=0x7f05000b;
         public static final int QuestionsList=0x7f050001;
         public static final int QuestionsList_AskDate=0x7f050008;
