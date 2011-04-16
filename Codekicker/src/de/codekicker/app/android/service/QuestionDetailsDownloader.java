@@ -15,11 +15,11 @@ import android.content.Intent;
 import android.util.Log;
 import de.codekicker.app.android.business.GravatarBitmapDownloader;
 import de.codekicker.app.android.business.ServerRequest;
-import de.codekicker.app.android.config.ConfigManager;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Comment;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
+import de.codekicker.app.android.preference.PreferenceManager;
 
 public class QuestionDetailsDownloader extends IntentService {
 	private static final String TAG = "QuestionDetailsDownloader";
@@ -34,8 +34,8 @@ public class QuestionDetailsDownloader extends IntentService {
 		Log.v(TAG, "Downloading question details");
 		Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
 		try {
-			ConfigManager configManager = ConfigManager.getInstance(getApplicationContext());
-			ServerRequest serverRequest = new ServerRequest(configManager);
+			PreferenceManager preferenceManager = PreferenceManager.getInstance(getApplicationContext());
+			ServerRequest serverRequest = new ServerRequest(preferenceManager.getAppIdKey(), preferenceManager.getAppId());
 			String json = serverRequest.downloadJSON(DOWNLOAD_URL, "id=" + question.getId());
 			createQuestion(json, question);
 		} catch (Exception e) {

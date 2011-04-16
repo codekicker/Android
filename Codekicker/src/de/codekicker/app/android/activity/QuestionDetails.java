@@ -11,10 +11,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,8 +32,6 @@ import de.codekicker.app.android.widget.QuestionDetailsAdapter;
 public class QuestionDetails extends ListActivity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
 	private ProgressDialog progressDialog;
-	private ImageButton imageButtonUpvote;
-	private ImageButton imageButtonDownvote;
 	private Question question;
 	private BroadcastReceiver questionDownloadedReceiver = new BroadcastReceiver() {
 		private static final String TAG = "QuestionDownloadedReceiver";
@@ -47,6 +49,7 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
+		registerForContextMenu(getListView());
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
@@ -62,6 +65,27 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	}
 	
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.questions_details_context_menu, menu);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuItemUpvote:
+			// TODO: Upvote
+			return true;
+		case R.id.menuItemDownvote:
+			// TODO: Downvote
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+	
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(questionDownloadedReceiver);
@@ -70,11 +94,6 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		return question;
-	}
-	
-	@Override
-	protected void onListItemClick(ListView listView, View view, int position, long id) {
-		super.onListItemClick(listView, view, position, id);
 	}
 	
 	private void fillView(Question question) {
@@ -112,19 +131,13 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 		listView.addFooterView(footerLinearLayout);
 		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers());
 		setListAdapter(adapter);
+		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
+		buttonAnswer.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.imageButtonUpvote:
-			// TODO: Upvote
-			imageButtonUpvote.setImageResource(R.drawable.upvoteselected);
-			break;
-		case R.id.imageButtonDownvote:
-			// TODO: Downvote
-			imageButtonDownvote.setImageResource(R.drawable.downvoteselected);
-			break;
 		case R.id.buttonAnswer:
 			// TODO: Send answer
 			break;

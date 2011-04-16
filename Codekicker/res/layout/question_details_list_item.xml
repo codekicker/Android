@@ -11,20 +11,20 @@
 		<LinearLayout android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:orientation="vertical">
-			<ImageButton android:layout_width="wrap_content"
+			<ImageView android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/imageButtonUpvote"
-						style="@style/QuestionDetails.VoteButton"
-						android:src="@drawable/upvote" />
+						android:id="@+id/imageViewUpvote"
+						android:src="@drawable/upvote"
+						style="@style/QuestionDetails.VoteImage" />
 			<TextView android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:text="0"
 					style="@style/QuestionDetails.Votes" android:id="@+id/textViewVoteScore"/>
-			<ImageButton android:layout_width="wrap_content"
+			<ImageView android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/imageButtonDownvote"
-						style="@style/QuestionDetails.VoteButton"
-						android:src="@drawable/downvote" />
+						android:id="@+id/imageViewDownvote"
+						android:src="@drawable/downvote"
+						style="@style/QuestionDetails.VoteImage" />
 		</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 				android:layout_height="wrap_content"

@@ -21,4 +21,6 @@
 	<string name="password">Passwort</string>
 	<string name="successfulLoggedIn">Erfolgreich angemeldet</string>
 	<string name="errorCredentials">Benutzername und/oder Kennwort falsch</string>
+	<string name="upvote">Aufwerten</string>
+	<string name="downvote">Abwerten</string>
 </resources>
