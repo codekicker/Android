@@ -13,17 +13,20 @@ import org.json.JSONObject;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+
+import com.google.inject.Inject;
+
 import de.codekicker.app.android.business.GravatarBitmapDownloader;
-import de.codekicker.app.android.business.ServerRequest;
+import de.codekicker.app.android.business.IServerRequest;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Comment;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
-import de.codekicker.app.android.preference.PreferenceManager;
 
 public class QuestionDetailsDownloader extends IntentService {
 	private static final String TAG = "QuestionDetailsDownloader";
 	private static final String DOWNLOAD_URL = "http://codekicker.de/api/v1/QuestionView.json";
+	@Inject IServerRequest serverRequest;
 
 	public QuestionDetailsDownloader() {
 		super(TAG);
@@ -34,8 +37,6 @@ public class QuestionDetailsDownloader extends IntentService {
 		Log.v(TAG, "Downloading question details");
 		Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
 		try {
-			PreferenceManager preferenceManager = PreferenceManager.getInstance(getApplicationContext());
-			ServerRequest serverRequest = new ServerRequest(preferenceManager.getAppIdKey(), preferenceManager.getAppId());
 			String json = serverRequest.downloadJSON(DOWNLOAD_URL, "id=" + question.getId());
 			createQuestion(json, question);
 		} catch (Exception e) {

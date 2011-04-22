@@ -10,14 +10,19 @@ import java.net.URL;
 import android.util.Base64;
 import android.util.Log;
 
-public class ServerRequest {
+import com.google.inject.Inject;
+
+import de.codekicker.app.android.preference.IPreferenceManager;
+
+class ServerRequest implements IServerRequest {
 	private static final String TAG = "ServerRequest";
 	private final String appIdKey;
 	private final String appId;
 	
-	public ServerRequest(String appIdKey, String appId) {
-		this.appIdKey = appIdKey;
-		this.appId = appId;
+	@Inject
+	public ServerRequest(IPreferenceManager preferenceManager) {
+		appIdKey = preferenceManager.getAppIdKey();
+		appId = preferenceManager.getAppId();
 	}
 	
 	public String downloadJSON(String url, String postParameters) throws IOException {

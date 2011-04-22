@@ -15,7 +15,7 @@ import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
 
-public class QuestionsListAdapter extends ArrayAdapter<Question> {
+public class QuestionsListAdapter extends ArrayAdapter<Question> implements IQuestionsListAdapter {
 	private final LayoutInflater inflater;
 	private final Context context;
 	private final int listItemResourceId;

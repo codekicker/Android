@@ -1,19 +1,15 @@
 package de.codekicker.app.android.business;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class Network {
-	private final Context context;
-	
-	public Network(Context context) {
-		this.context = context;
-	}
+import com.google.inject.Inject;
+
+class Network implements INetwork {
+	@Inject private ConnectivityManager connectivityManager;
 	
 	public boolean isOnline() {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		return networkInfo != null && networkInfo.isConnected();
 	}
 }

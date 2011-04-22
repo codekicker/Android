@@ -2,7 +2,7 @@ package de.codekicker.app.android.activity;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
+import roboguice.activity.RoboListActivity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,15 +17,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.inject.Inject;
+
 import de.codekicker.app.android.R;
-import de.codekicker.app.android.business.Network;
+import de.codekicker.app.android.business.INetwork;
 import de.codekicker.app.android.model.Question;
-import de.codekicker.app.android.preference.PreferenceManager;
+import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.service.QuestionListDownloader;
 import de.codekicker.app.android.widget.QuestionsListAdapter;
 
-public class QuestionList extends ListActivity {
+public class QuestionList extends RoboListActivity {
 	private static final String TAG = "QuestionList";
+	@Inject INetwork network;
+	@Inject IPreferenceManager preferenceManager;
+	
 	private QuestionsListAdapter listAdapter;
 	private ProgressDialog progressDialog;
 	Question[] questions;
@@ -87,14 +93,12 @@ public class QuestionList extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		PreferenceManager preferenceManager = PreferenceManager.getInstance(this);
 		MenuItem profileMenuItem = menu.findItem(R.id.menuItemProfile);
 		profileMenuItem.setEnabled(preferenceManager.getIsUserAuthenticated());
 		return true;
 	}
 
 	private void downloadQuestions(boolean finishIfOffline) {
-		Network network = new Network(this);
 		if (!network.isOnline()) {
 			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
 			if (finishIfOffline)

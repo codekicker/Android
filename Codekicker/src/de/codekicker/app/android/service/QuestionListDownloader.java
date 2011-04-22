@@ -9,17 +9,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.IntentService;
+import roboguice.service.RoboIntentService;
 import android.content.Intent;
 import android.util.Log;
-import de.codekicker.app.android.business.ServerRequest;
+
+import com.google.inject.Inject;
+
+import de.codekicker.app.android.business.IServerRequest;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
-import de.codekicker.app.android.preference.PreferenceManager;
+import de.codekicker.app.android.preference.IPreferenceManager;
 
-public class QuestionListDownloader extends IntentService {
+public class QuestionListDownloader extends RoboIntentService {
 	private static final String TAG = "QuestionListDownloader";
 	private static final String DOWNLOAD_URL = "QuestionList.json";
+	@Inject IPreferenceManager preferenceManager;
+	@Inject IServerRequest serverRequest;
 	
 	public QuestionListDownloader() {
 		super(TAG);
@@ -30,8 +35,6 @@ public class QuestionListDownloader extends IntentService {
 		Log.v(TAG, "Downloading questions");
 		ArrayList<Question> questions = new ArrayList<Question>();
 		try {
-			PreferenceManager preferenceManager = PreferenceManager.getInstance(getApplicationContext());
-			ServerRequest serverRequest = new ServerRequest(preferenceManager.getAppIdKey(), preferenceManager.getAppId());
 			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "sortOrder=AskDateTime&filterMinID=0");
 			questions = createQuestions(json);
 		} catch (Exception e) {

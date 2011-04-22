@@ -1,24 +1,28 @@
 package de.codekicker.app.android.activity;
 
+import roboguice.activity.RoboPreferenceActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.widget.Toast;
-import de.codekicker.app.android.R;
-import de.codekicker.app.android.business.Authenticator;
-import de.codekicker.app.android.preference.PreferenceManager;
 
-public class Preferences extends PreferenceActivity {
+import com.google.inject.Inject;
+
+import de.codekicker.app.android.R;
+import de.codekicker.app.android.business.IAuthenticator;
+import de.codekicker.app.android.preference.IPreferenceManager;
+
+public class Preferences extends RoboPreferenceActivity {
 	private static final String TAG = "PreferenceActivity";
-	private PreferenceManager preferenceManager;
+	@Inject private IPreferenceManager preferenceManager;
+	@Inject private IAuthenticator authenticator;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.preferences);
 		// Username and Password will be automatically saved in global DefaultSharedPreferences
-		preferenceManager = PreferenceManager.getInstance(this);
+		//preferenceManager = PreferenceManager.getInstance(this);
 	}
 	
 	@Override
@@ -33,7 +37,6 @@ public class Preferences extends PreferenceActivity {
 	private class CredentialsChecker extends AsyncTask<String, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(String... params) {
-			Authenticator authenticator = new Authenticator(getApplicationContext());
 			boolean valid = authenticator.verify(params[0], params[1]);
 			Log.v(TAG, "Username/Password valid: " + valid);
 			preferenceManager.setIsUserAuthenticated(valid);
