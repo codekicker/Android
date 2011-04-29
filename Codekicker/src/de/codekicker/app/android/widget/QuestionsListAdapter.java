@@ -21,13 +21,13 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> implements IQue
 	private final int listItemResourceId;
 	private final List<Question> questions;
 	
-	public QuestionsListAdapter(Context context, int listItemResourceId) {
-		this(context, listItemResourceId, new ArrayList<Question>());
+	public QuestionsListAdapter(Context context, int listItemResourceId, LayoutInflater layoutInflater) {
+		this(context, listItemResourceId, layoutInflater, new ArrayList<Question>());
 	}
 	
-	private QuestionsListAdapter(Context context, int listItemResourceId, List<Question> questions) {
+	private QuestionsListAdapter(Context context, int listItemResourceId, LayoutInflater layoutInflater, List<Question> questions) {
 		super(context, listItemResourceId, questions);
-		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.inflater = layoutInflater;
 		this.context = context;
 		this.listItemResourceId = listItemResourceId;
 		this.questions = questions;

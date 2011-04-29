@@ -25,16 +25,15 @@ import de.codekicker.app.android.business.INetwork;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.service.QuestionListDownloader;
-import de.codekicker.app.android.widget.QuestionsListAdapter;
+import de.codekicker.app.android.widget.IQuestionsListAdapter;
 
 public class QuestionList extends RoboListActivity {
 	private static final String TAG = "QuestionList";
-	@Inject INetwork network;
-	@Inject IPreferenceManager preferenceManager;
-	
-	private QuestionsListAdapter listAdapter;
+	@Inject private INetwork network;
+	@Inject private IPreferenceManager preferenceManager;
+	@Inject private IQuestionsListAdapter listAdapter;
 	private ProgressDialog progressDialog;
-	Question[] questions;
+	private Question[] questions;
 	private BroadcastReceiver questionsDownloadedReceiver = new BroadcastReceiver() {
 		private static final String TAG = "QuestionsDownloadedReceiver";
 		
@@ -51,8 +50,6 @@ public class QuestionList extends RoboListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
-		listAdapter = new QuestionsListAdapter(this, R.layout.questions_list_item);
 		setListAdapter(listAdapter);
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
@@ -65,8 +62,14 @@ public class QuestionList extends RoboListActivity {
 	}
 	
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
 		unregisterReceiver(questionsDownloadedReceiver);
 	}
 	
