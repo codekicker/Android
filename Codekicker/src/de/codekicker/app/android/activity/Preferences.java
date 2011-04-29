@@ -22,7 +22,6 @@ public class Preferences extends RoboPreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.preferences);
 		// Username and Password will be automatically saved in global DefaultSharedPreferences
-		//preferenceManager = PreferenceManager.getInstance(this);
 	}
 	
 	@Override

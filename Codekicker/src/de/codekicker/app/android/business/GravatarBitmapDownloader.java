@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-public class GravatarBitmapDownloader {
+class GravatarBitmapDownloader implements IGravatarBitmapDownloader {
 	private static final String TAG = "GravatarBitmapDownloader";
 	private static final String BASE_URL = "http://www.gravatar.com/avatar/%s?s=40";
 	

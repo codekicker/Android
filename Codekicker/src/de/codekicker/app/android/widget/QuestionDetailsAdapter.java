@@ -21,10 +21,10 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
 	private final int listItemResourceId;
 	private final List<Answer> answers;
 
-	public QuestionDetailsAdapter(Context context, int listItemResourceId, List<Answer> answers) {
+	public QuestionDetailsAdapter(Context context, int listItemResourceId, List<Answer> answers, LayoutInflater inflater) {
 		super(context, listItemResourceId, answers);
 		this.context = context;
-		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.inflater = inflater;
 		this.listItemResourceId = listItemResourceId;
 		this.answers = answers;
 	}

@@ -3,7 +3,9 @@ package de.codekicker.app.android.activity;
 import java.text.DateFormat;
 import java.util.Date;
 
-import android.app.ListActivity;
+import roboguice.activity.RoboListActivity;
+import roboguice.inject.InjectView;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,20 +21,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.inject.Inject;
+
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
+import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.service.QuestionDetailsDownloader;
+import de.codekicker.app.android.service.SendAnswerService;
 import de.codekicker.app.android.widget.QuestionDetailsAdapter;
 
-public class QuestionDetails extends ListActivity implements OnClickListener {
+public class QuestionDetails extends RoboListActivity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
+	@Inject private LayoutInflater layoutInflater;
+	@Inject private IPreferenceManager preferenceManager;
 	private ProgressDialog progressDialog;
 	private Question question;
+	private EditText editTextYourAnswer;
 	private BroadcastReceiver questionDownloadedReceiver = new BroadcastReceiver() {
 		private static final String TAG = "QuestionDownloadedReceiver";
 		
@@ -48,7 +59,6 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
 		registerForContextMenu(getListView());
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
@@ -62,6 +72,18 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 			question = (Question) nonConfigurationInstance;
 			fillView(question);
 		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(questionDownloadedReceiver);
 	}
 	
 	@Override
@@ -86,12 +108,6 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	}
 	
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(questionDownloadedReceiver);
-	}
-	
-	@Override
 	public Object onRetainNonConfigurationInstance() {
 		return question;
 	}
@@ -99,7 +115,6 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 	private void fillView(Question question) {
 		Log.v(TAG, "Filling view");
 		User user = question.getUser();
-		LayoutInflater layoutInflater = getLayoutInflater();
 		LinearLayout headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
 		LinearLayout footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
 		Date date = question.getAskDate();
@@ -129,17 +144,24 @@ public class QuestionDetails extends ListActivity implements OnClickListener {
 		ListView listView = getListView();
 		listView.addHeaderView(headerLinearLayout);
 		listView.addFooterView(footerLinearLayout);
-		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers());
+		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
 		setListAdapter(adapter);
+		int visibility = preferenceManager.getIsUserAuthenticated() ? View.VISIBLE : View.GONE;
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
+		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
+		EditText editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
+		editTextYourAnswer.setVisibility(visibility);
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.buttonAnswer:
-			// TODO: Send answer
+			Intent intent = new Intent(this, SendAnswerService.class);
+			intent.putExtra("de.codekicker.app.android.Question", question);
+			intent.putExtra("de.codekicker.app.android.AnswerBody", editTextYourAnswer.getText().toString());
+			startService(intent);
 			break;
 		}
 	}

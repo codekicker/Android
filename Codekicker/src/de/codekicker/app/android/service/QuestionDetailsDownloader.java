@@ -10,23 +10,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.IntentService;
+import roboguice.service.RoboIntentService;
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.inject.Inject;
 
-import de.codekicker.app.android.business.GravatarBitmapDownloader;
+import de.codekicker.app.android.business.IGravatarBitmapDownloader;
 import de.codekicker.app.android.business.IServerRequest;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Comment;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
+import de.codekicker.app.android.preference.IPreferenceManager;
 
-public class QuestionDetailsDownloader extends IntentService {
+public class QuestionDetailsDownloader extends RoboIntentService {
 	private static final String TAG = "QuestionDetailsDownloader";
-	private static final String DOWNLOAD_URL = "http://codekicker.de/api/v1/QuestionView.json";
+	private static final String DOWNLOAD_URL = "QuestionView.json";
+	@Inject IPreferenceManager preferenceManager;
 	@Inject IServerRequest serverRequest;
+	@Inject IGravatarBitmapDownloader gravatarBitmapDownloader;
 
 	public QuestionDetailsDownloader() {
 		super(TAG);
@@ -37,7 +40,7 @@ public class QuestionDetailsDownloader extends IntentService {
 		Log.v(TAG, "Downloading question details");
 		Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
 		try {
-			String json = serverRequest.downloadJSON(DOWNLOAD_URL, "id=" + question.getId());
+			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "id=" + question.getId());
 			createQuestion(json, question);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
@@ -50,10 +53,9 @@ public class QuestionDetailsDownloader extends IntentService {
 	private void createQuestion(String json, Question question) {
 		try {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			GravatarBitmapDownloader bitmapDownloader = new GravatarBitmapDownloader();
 			User questionUser = question.getUser();
 			Log.v(TAG, "Downloading question Gravatar Bitmap");
-			questionUser.setGravatar(bitmapDownloader.downloadBitmap(questionUser.getGravatarHash()));
+			questionUser.setGravatar(gravatarBitmapDownloader.downloadBitmap(questionUser.getGravatarHash()));
 			JSONObject jsonObject = new JSONObject(json);
 			JSONArray rawAnswers = jsonObject.getJSONArray("Answers");
 			Log.v(TAG, "Creating Answers");
@@ -88,7 +90,7 @@ public class QuestionDetailsDownloader extends IntentService {
 						rawUserInfo.getString("UrlName"),
 						rawUserInfo.getInt("Reputation"),
 						gravatarId,
-						bitmapDownloader.downloadBitmap(gravatarId));
+						gravatarBitmapDownloader.downloadBitmap(gravatarId));
 				Date createDateTime = simpleDateFormat.parse(rawAnswer.getString("CreateDateTime"));
 				Answer answer = new Answer(createDateTime,
 						rawAnswer.getString("TextBody"),

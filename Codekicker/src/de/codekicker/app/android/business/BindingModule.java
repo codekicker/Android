@@ -9,5 +9,6 @@ public class BindingModule extends AbstractAndroidModule {
 		bind(INetwork.class).to(Network.class);
 		bind(IAuthenticator.class).to(Authenticator.class);
 		bind(IServerRequest.class).to(ServerRequest.class);
+		bind(IGravatarBitmapDownloader.class).to(GravatarBitmapDownloader.class);
 	}
 }
