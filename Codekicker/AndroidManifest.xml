@@ -20,5 +20,6 @@
 		<activity android:name=".activity.Preferences" />
 		<service android:name=".service.QuestionListDownloader" />
 		<service android:name=".service.QuestionDetailsDownloader" />
+		<service android:name=".service.SendAnswerService" />
 	</application>
 </manifest>
