@@ -150,7 +150,7 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
 		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
-		EditText editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
+		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
 		editTextYourAnswer.setVisibility(visibility);
 	}
 

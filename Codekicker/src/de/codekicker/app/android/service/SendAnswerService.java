@@ -2,9 +2,12 @@ package de.codekicker.app.android.service;
 
 import java.net.URLEncoder;
 
+import org.json.JSONObject;
+
 import roboguice.service.RoboIntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,9 +21,11 @@ import de.codekicker.app.android.preference.IPreferenceManager;
 public class SendAnswerService extends RoboIntentService {
 	private final static String TAG = "AnswerService";
 	private static final String DOWNLOAD_URL = "AddAnswer.json";
+	private final Handler handler = new Handler();
 	@Inject IPreferenceManager preferenceManager;
 	@Inject IServerRequest serverRequest;
 	@Inject Context context;
+	@Inject Handler foo;
 	
 	public SendAnswerService() {
 		super(TAG);
@@ -29,6 +34,8 @@ public class SendAnswerService extends RoboIntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Log.v(TAG, "Sending answer to server");
+		boolean successful = true;
+		CharSequence toastMessage = context.getString(R.string.sendAnswerSuccessful);
 		try {
 			Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
 			String answer = intent.getStringExtra("de.codekicker.app.android.AnswerBody");
@@ -37,12 +44,28 @@ public class SendAnswerService extends RoboIntentService {
 			String username = preferenceManager.getUsername();
 			String password = preferenceManager.getPassword();
 			String result = serverRequest.send(fullUrl, parameters, username, password);
-			Toast.makeText(context, R.string.sendAnswerSuccessful, Toast.LENGTH_LONG).show();
+			JSONObject jsonResult = new JSONObject(result);
+			String errorMessage = jsonResult.getString("ErrorMessage");
+			if (errorMessage != null && !errorMessage.equals("null")) {
+				Log.e(TAG, errorMessage);
+				toastMessage = errorMessage;
+				successful = false;
+			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
-			Toast.makeText(context, R.string.sendAnswerFailed, Toast.LENGTH_LONG).show();
+			toastMessage = context.getString(R.string.sendAnswerFailed);
+			successful = false;
 		}
+		final CharSequence finalToastMessage = toastMessage;
+		// Sending Toast in UI Thread
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(context, finalToastMessage, Toast.LENGTH_LONG).show();
+			}
+		});
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.ANSWER_SENT");
+		broadcastIntent.putExtra("successful", successful);
 		sendBroadcast(broadcastIntent);
 	}
 }
