@@ -2,5 +2,6 @@
 	<EditTextPreference android:key="username"
 						android:title="@string/username" />
 	<EditTextPreference android:key="password"
-						android:title="@string/password" />
+						android:title="@string/password"
+						android:password="true" />
 </PreferenceScreen>
