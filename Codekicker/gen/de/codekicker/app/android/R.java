@@ -77,6 +77,7 @@ public final class R {
         public static final int refreshingData=0x7f040008;
         public static final int sendAnswerFailed=0x7f040018;
         public static final int sendAnswerSuccessful=0x7f040017;
+        public static final int sendingAnswer=0x7f040019;
         public static final int settings=0x7f040006;
         public static final int successfulLoggedIn=0x7f040013;
         public static final int upvote=0x7f040015;

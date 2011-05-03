@@ -4,8 +4,6 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import roboguice.activity.RoboListActivity;
-import roboguice.inject.InjectView;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,10 +24,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.inject.Inject;
 
 import de.codekicker.app.android.R;
+import de.codekicker.app.android.business.INetwork;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
@@ -41,6 +41,7 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	private static final String TAG = "QuestionDetails";
 	@Inject private LayoutInflater layoutInflater;
 	@Inject private IPreferenceManager preferenceManager;
+	@Inject private INetwork network;
 	private ProgressDialog progressDialog;
 	private Question question;
 	private EditText editTextYourAnswer;
@@ -53,6 +54,20 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 			question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
 			fillView(question);
 			progressDialog.hide();
+		}
+	};
+	private BroadcastReceiver answerSentReceiver = new BroadcastReceiver() {
+		private static final String TAG = "AnswerSentReceiver";
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.v(TAG, "Broadcast received");
+			boolean successful = intent.getBooleanExtra("successful", false);
+			progressDialog.hide();
+			if (successful) {
+				Log.v(TAG, "Answer was successful sent. Navigating back.");
+				finish();
+			}
 		}
 	};
 	
@@ -78,12 +93,14 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	protected void onResume() {
 		super.onResume();
 		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
+		registerReceiver(answerSentReceiver, new IntentFilter("de.codekicker.app.android.ANSWER_SENT"));
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		unregisterReceiver(questionDownloadedReceiver);
+		unregisterReceiver(answerSentReceiver);
 	}
 	
 	@Override
@@ -158,6 +175,11 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.buttonAnswer:
+			if (!network.isOnline()) {
+				Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+				return;
+			}
+			progressDialog = ProgressDialog.show(this, null, getString(R.string.sendingAnswer));
 			Intent intent = new Intent(this, SendAnswerService.class);
 			intent.putExtra("de.codekicker.app.android.Question", question);
 			intent.putExtra("de.codekicker.app.android.AnswerBody", editTextYourAnswer.getText().toString());

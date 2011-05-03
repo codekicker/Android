@@ -25,4 +25,5 @@
 	<string name="downvote">Abwerten</string>
 	<string name="sendAnswerSuccessful">Erfolgreich geantwortet</string>
 	<string name="sendAnswerFailed">Antworten fehlgeschlagen</string>
+	<string name="sendingAnswer">Sende Antwort</string>
 </resources>

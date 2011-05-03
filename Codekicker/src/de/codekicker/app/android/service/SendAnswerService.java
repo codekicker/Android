@@ -64,6 +64,7 @@ public class SendAnswerService extends RoboIntentService {
 				Toast.makeText(context, finalToastMessage, Toast.LENGTH_LONG).show();
 			}
 		});
+		Log.v(TAG, "Sending answer was successful: " + successful);
 		Intent broadcastIntent = new Intent("de.codekicker.app.android.ANSWER_SENT");
 		broadcastIntent.putExtra("successful", successful);
 		sendBroadcast(broadcastIntent);
