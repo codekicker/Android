@@ -53,7 +53,7 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 			Log.v(TAG, "Broadcast received");
 			question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
 			fillView(question);
-			progressDialog.hide();
+			progressDialog.dismiss();
 		}
 	};
 	private BroadcastReceiver answerSentReceiver = new BroadcastReceiver() {
@@ -63,10 +63,11 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		public void onReceive(Context context, Intent intent) {
 			Log.v(TAG, "Broadcast received");
 			boolean successful = intent.getBooleanExtra("successful", false);
-			progressDialog.hide();
+			progressDialog.dismiss();
 			if (successful) {
 				Log.v(TAG, "Answer was successful sent. Navigating back.");
-				finish();
+				QuestionDetails.this.setResult(QuestionDetailsResultCodes.ANSWERED);
+				QuestionDetails.this.finish();
 			}
 		}
 	};
