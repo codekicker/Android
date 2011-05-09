@@ -12,6 +12,7 @@ class Authenticator implements IAuthenticator {
 	@Inject IPreferenceManager preferenceManager;
 	@Inject IServerRequest serverRequest;
 	
+	@Override
 	public boolean verify(String username, String password) {
 		try {
 			// If no Exception is thrown, the authentication is valid. So we ignore the JSON result

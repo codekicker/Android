@@ -25,21 +25,25 @@ class ServerRequest implements IServerRequest {
 		appId = preferenceManager.getAppId();
 	}
 	
+	@Override
 	public String downloadJSON(String url, String postParameters) throws IOException {
 		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
+	@Override
 	public String downloadJSON(String url, String postParameters, String username, String password) throws IOException {
 		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, username, password);
 	}
 	
+	@Override
 	public String send(String url, String postParameters) throws IOException {
 		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
+	@Override
 	public String send(String url, String postParameters, String username, String password) throws IOException {
 		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, username, password);

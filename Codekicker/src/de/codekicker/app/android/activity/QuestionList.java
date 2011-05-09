@@ -83,7 +83,14 @@ public class QuestionList extends RoboListActivity {
 		Question selectedQuestion = (Question) listView.getItemAtPosition(position);
 		Intent intent = new Intent(this, QuestionDetails.class);
 		intent.putExtra("de.codekicker.app.android.SelectedQuestion", selectedQuestion);
-		startActivity(intent);
+		startActivityForResult(intent, RESULT_FIRST_USER + 1);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == QuestionDetailsResultCodes.ANSWERED) {
+			Log.v(TAG, "fooooooooooooooooooo");
+		}
 	}
 
 	@Override
