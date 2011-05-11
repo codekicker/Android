@@ -43,7 +43,7 @@ public class QuestionList extends RoboListActivity {
 			ArrayList<Parcelable> parcelables = intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions");
 			questions = parcelables.toArray(new Question[0]);
 			fillList();
-			progressDialog.hide();
+			progressDialog.dismiss();
 		}
 	};
 	
@@ -89,7 +89,8 @@ public class QuestionList extends RoboListActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == QuestionDetailsResultCodes.ANSWERED) {
-			Log.v(TAG, "fooooooooooooooooooo");
+			Log.v(TAG, "User has answered. Now refreshing list.");
+			downloadQuestions(false);
 		}
 	}
 
@@ -124,6 +125,7 @@ public class QuestionList extends RoboListActivity {
 		Log.v(TAG, "Adding questions to list");
 		// Avoid multiple notifications to the view
 		listAdapter.setNotifyOnChange(false);
+		listAdapter.clear();
 		for (Question p : questions) {
 			listAdapter.add(p);
 		}

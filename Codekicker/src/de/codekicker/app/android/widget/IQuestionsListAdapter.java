@@ -7,4 +7,5 @@ public interface IQuestionsListAdapter extends ListAdapter {
 	void setNotifyOnChange(boolean notifyOnChange);
 	void notifyDataSetChanged();
 	void add(Question question);
+	void clear();
 }
