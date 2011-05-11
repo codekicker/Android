@@ -100,14 +100,6 @@ public class QuestionList extends RoboListActivity {
 		inflater.inflate(R.menu.questions_list_options_menu, menu);
 		return true;
 	}
-	
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		MenuItem profileMenuItem = menu.findItem(R.id.menuItemProfile);
-		profileMenuItem.setEnabled(preferenceManager.getIsUserAuthenticated());
-		return true;
-	}
 
 	private void downloadQuestions(boolean finishIfOffline) {
 		if (!network.isOnline()) {
@@ -135,9 +127,6 @@ public class QuestionList extends RoboListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuItemProfile:
-			Log.v(TAG, "Profile menu item selected.");
-			return true;
 		case R.id.menuItemPreferences:
 			Log.v(TAG, "Preferences menu item selected.");
 			startActivity(new Intent(this, Preferences.class));
