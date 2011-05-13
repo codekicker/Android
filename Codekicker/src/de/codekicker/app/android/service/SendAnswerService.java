@@ -20,12 +20,11 @@ import de.codekicker.app.android.preference.IPreferenceManager;
 
 public class SendAnswerService extends RoboIntentService {
 	private final static String TAG = "AnswerService";
-	private static final String DOWNLOAD_URL = "AddAnswer.json";
+	private static final String ANSWER_URL = "AddAnswer.json";
 	private final Handler handler = new Handler();
 	@Inject IPreferenceManager preferenceManager;
 	@Inject IServerRequest serverRequest;
 	@Inject Context context;
-	@Inject Handler foo;
 	
 	public SendAnswerService() {
 		super(TAG);
@@ -39,7 +38,7 @@ public class SendAnswerService extends RoboIntentService {
 		try {
 			Question question = intent.getParcelableExtra("de.codekicker.app.android.Question");
 			String answer = intent.getStringExtra("de.codekicker.app.android.AnswerBody");
-			String fullUrl = preferenceManager.getApiBaseUrl() + DOWNLOAD_URL;
+			String fullUrl = preferenceManager.getApiBaseUrl() + ANSWER_URL;
 			String parameters = "questionID=" + question.getId() + "&answerBody=" + URLEncoder.encode(answer, "UTF-8");
 			String username = preferenceManager.getUsername();
 			String password = preferenceManager.getPassword();

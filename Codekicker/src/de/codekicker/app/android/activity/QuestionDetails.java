@@ -115,10 +115,10 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuItemUpvote:
-			// TODO: Upvote
+			voteUp();
 			return true;
 		case R.id.menuItemDownvote:
-			// TODO: Downvote
+			voteDown();
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -186,6 +186,22 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 			intent.putExtra("de.codekicker.app.android.AnswerBody", editTextYourAnswer.getText().toString());
 			startService(intent);
 			break;
+		}
+	}
+	
+	private void voteUp() {
+		if (!network.isOnline()) {
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+		} else {
+			
+		}
+	}
+	
+	private void voteDown() {
+		if (!network.isOnline()) {
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+		} else {
+			
 		}
 	}
 }
