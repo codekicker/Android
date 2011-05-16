@@ -6,7 +6,12 @@ import android.net.NetworkInfo;
 import com.google.inject.Inject;
 
 class Network implements INetwork {
-	@Inject private ConnectivityManager connectivityManager;
+	private final ConnectivityManager connectivityManager;
+	
+	@Inject
+	public Network(ConnectivityManager connectivityManager) {
+		this.connectivityManager = connectivityManager;
+	}
 	
 	@Override
 	public boolean isOnline() {

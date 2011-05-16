@@ -1,5 +1,8 @@
 package de.codekicker.app.android.business;
 
 public interface IAuthenticator {
-	boolean verify(String username, String password);
+	public interface SuccessCallback {
+		void authenticationDone(boolean credentialsValid);
+	};
+	void verifyCredentials(String username, String password, SuccessCallback callback);
 }

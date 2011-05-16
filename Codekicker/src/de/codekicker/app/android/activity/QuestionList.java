@@ -1,15 +1,11 @@
 package de.codekicker.app.android.activity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import roboguice.activity.RoboListActivity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,30 +18,18 @@ import com.google.inject.Inject;
 
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.business.INetwork;
+import de.codekicker.app.android.business.IQuestionListDownloader;
+import de.codekicker.app.android.business.IQuestionListDownloader.DownloadDoneCallback;
 import de.codekicker.app.android.model.Question;
-import de.codekicker.app.android.preference.IPreferenceManager;
-import de.codekicker.app.android.service.QuestionListDownloader;
 import de.codekicker.app.android.widget.IQuestionsListAdapter;
 
 public class QuestionList extends RoboListActivity {
 	private static final String TAG = "QuestionList";
 	@Inject private INetwork network;
-	@Inject private IPreferenceManager preferenceManager;
+	@Inject private IQuestionListDownloader questionListDownloader;
 	@Inject private IQuestionsListAdapter listAdapter;
 	private ProgressDialog progressDialog;
 	private Question[] questions;
-	private BroadcastReceiver questionsDownloadedReceiver = new BroadcastReceiver() {
-		private static final String TAG = "QuestionsDownloadedReceiver";
-		
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			Log.v(TAG, "Questions downloaded");
-			ArrayList<Parcelable> parcelables = intent.getParcelableArrayListExtra("de.codekicker.app.android.Questions");
-			questions = parcelables.toArray(new Question[0]);
-			fillList();
-			progressDialog.dismiss();
-		}
-	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,18 +43,6 @@ public class QuestionList extends RoboListActivity {
 			questions = (Question[]) nonConfigurationInstance;
 			fillList();
 		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		registerReceiver(questionsDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTIONS_DOWNLOAD_FINISHED"));
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(questionsDownloadedReceiver);
 	}
 	
 	@Override
@@ -109,8 +81,15 @@ public class QuestionList extends RoboListActivity {
 			return;
 		}
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-		Intent intent = new Intent(this, QuestionListDownloader.class);
-		startService(intent);
+		questionListDownloader.downloadQuestions(new DownloadDoneCallback() {
+			@Override
+			public void downloadDone(List<Question> questions) {
+				Log.v(TAG, "Questions downloaded");
+				QuestionList.this.questions = questions.toArray(new Question[0]);
+				fillList();
+				progressDialog.dismiss();
+			}
+		});
 	}
 	
 	private void fillList() {

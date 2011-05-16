@@ -1,17 +1,16 @@
 package de.codekicker.app.android.preference;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.google.inject.Inject;
 
 class PreferenceManager implements IPreferenceManager {
-	private static SharedPreferences sharedPreferences;
+	private final SharedPreferences sharedPreferences;
 	
 	@Inject
-	public PreferenceManager(Context context) {
-		sharedPreferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+	public PreferenceManager(SharedPreferences sharedPreferences) {
+		this.sharedPreferences = sharedPreferences;
 	}
 	
 	@Override

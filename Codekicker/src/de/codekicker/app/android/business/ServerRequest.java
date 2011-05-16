@@ -1,13 +1,19 @@
 package de.codekicker.app.android.business;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import android.util.Base64;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -26,50 +32,46 @@ class ServerRequest implements IServerRequest {
 	}
 	
 	@Override
-	public String downloadJSON(String url, String postParameters) throws IOException {
+	public String downloadJSON(String url, String postParameters) throws URISyntaxException, ClientProtocolException, IOException {
 		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
 	@Override
-	public String downloadJSON(String url, String postParameters, String username, String password) throws IOException {
+	public String downloadJSON(String url, String postParameters, String username, String password) throws URISyntaxException, ClientProtocolException, IOException {
 		Log.v(TAG, "Downloading JSON String from URL " + url);
 		return makeRequest(url, postParameters, username, password);
 	}
 	
 	@Override
-	public String send(String url, String postParameters) throws IOException {
+	public String send(String url, String postParameters) throws URISyntaxException, ClientProtocolException, IOException {
 		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, null, null);
 	}
 	
 	@Override
-	public String send(String url, String postParameters, String username, String password) throws IOException {
+	public String send(String url, String postParameters, String username, String password) throws URISyntaxException, ClientProtocolException, IOException {
 		Log.v(TAG, "Sending data to URL " + url);
 		return makeRequest(url, postParameters, username, password);
 	}
 	
-	private String makeRequest(String spec, String postParameters, String username, String password) throws IOException {
+	private String makeRequest(String spec, String postParameters, String username, String password) throws URISyntaxException, ClientProtocolException, IOException {
 		BufferedReader bufferedReader = null;
-		DataOutputStream dataOutputStream = null;
 		try {
+			URI uri = new URI(spec);
 			byte[] params = postParameters.getBytes();
-			URL url = new URL(spec);
-			HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-			httpUrlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			httpUrlConnection.setRequestProperty("Content-Length", Integer.toString(params.length));
-			httpUrlConnection.setRequestProperty(appIdKey, appId);
-			httpUrlConnection.setRequestMethod("POST");
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			HttpPost httpPost = new HttpPost(uri);
+			httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
+			httpPost.addHeader(appIdKey, appId);
+			httpPost.setEntity(new ByteArrayEntity(params));
 			if (username != null && password != null) {
-				String authorizationString = (username + ":" + password);
-				authorizationString = Base64.encodeToString(authorizationString.getBytes(), Base64.NO_WRAP);
-				httpUrlConnection.setRequestProperty("Authorization", "Basic " + authorizationString);
+				httpClient.getCredentialsProvider().setCredentials(
+						new AuthScope(uri.getHost(), uri.getPort()),
+						new UsernamePasswordCredentials(username, password));
 			}
-			httpUrlConnection.setDoOutput(true);
-			dataOutputStream = new DataOutputStream(httpUrlConnection.getOutputStream());
-			dataOutputStream.write(params, 0, params.length);
-			dataOutputStream.flush();
-			InputStreamReader inputStreamReader = new InputStreamReader(httpUrlConnection.getInputStream());
+			HttpResponse response = httpClient.execute(httpPost);
+			InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
 			bufferedReader = new BufferedReader(inputStreamReader);
 			StringBuilder stringBuilder = new StringBuilder();
 			String line;
@@ -83,7 +85,6 @@ class ServerRequest implements IServerRequest {
 			if (bufferedReader != null) {
 				try {
 					bufferedReader.close();
-					dataOutputStream.close();
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
 				}
