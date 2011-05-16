@@ -108,16 +108,18 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		listView.addHeaderView(headerLinearLayout);
 		listView.addFooterView(footerLinearLayout);
 		ImageView imageViewUpvote = (ImageView) findViewById(R.id.imageViewUpvote);
+		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
 		imageViewUpvote.setOnClickListener(this);
 		ImageView imageViewDownvote = (ImageView) findViewById(R.id.imageViewDownvote);
+		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
 		imageViewDownvote.setOnClickListener(this);
-		int visibility = preferenceManager.getIsUserAuthenticated() ? View.VISIBLE : View.GONE;
+		int visibility = preferenceManager.isUserAuthenticated() ? View.VISIBLE : View.GONE;
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
 		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
 		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
 		editTextYourAnswer.setVisibility(visibility);
-		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
+		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, preferenceManager, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
 		setListAdapter(adapter);
 	}
 

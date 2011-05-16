@@ -11,7 +11,7 @@ public interface IPreferenceManager {
 
 	public abstract String getPassword();
 
-	public abstract boolean getIsUserAuthenticated();
+	public abstract boolean isUserAuthenticated();
 
 	public abstract void setIsUserAuthenticated(boolean value);
 }

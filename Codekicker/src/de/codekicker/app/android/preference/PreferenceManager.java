@@ -39,7 +39,7 @@ class PreferenceManager implements IPreferenceManager {
 	}
 	
 	@Override
-	public boolean getIsUserAuthenticated() {
+	public boolean isUserAuthenticated() {
 		return sharedPreferences.getBoolean("UserAuthenticated", false);
 	}
 	

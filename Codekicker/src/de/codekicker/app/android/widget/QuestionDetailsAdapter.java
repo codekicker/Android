@@ -15,9 +15,11 @@ import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.User;
+import de.codekicker.app.android.preference.IPreferenceManager;
 
 public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
 	private final QuestionDetails questionDetails;
+	private final IPreferenceManager preferenceManager;
 	private final LayoutInflater inflater;
 	private final int listItemResourceId;
 	private final List<Answer> answers;
@@ -50,9 +52,14 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
 		}
 	}
 
-	public QuestionDetailsAdapter(QuestionDetails questionDetails, int listItemResourceId, List<Answer> answers, LayoutInflater inflater) {
+	public QuestionDetailsAdapter(QuestionDetails questionDetails,
+			IPreferenceManager preferenceManager,
+			int listItemResourceId,
+			List<Answer> answers,
+			LayoutInflater inflater) {
 		super(questionDetails, listItemResourceId, answers);
 		this.questionDetails = questionDetails;
+		this.preferenceManager = preferenceManager;
 		this.inflater = inflater;
 		this.listItemResourceId = listItemResourceId;
 		this.answers = answers;
@@ -79,9 +86,11 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
 		TextView textViewUserName = (TextView) listItemView.findViewById(R.id.textViewUserName);
 		TextView textViewReputation = (TextView) listItemView.findViewById(R.id.textViewReputation);
 		TextView textViewComments = (TextView) listItemView.findViewById(R.id.textViewComments);
+		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
 		imageViewUpvote.setOnClickListener(new UpvoteClickListener(position + 1, answer));
 		textViewVoteScore.setText(Integer.toString(answer.getVoteScore()));
 		imageViewDownvote.setOnClickListener(new DownvoteClickListener(position + 1, answer));
+		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
 		textViewQuestionBody.setText(answer.getTextBody());
 		textViewAskDate.setText(createDateString);
 		imageViewGravatar.setImageBitmap(user.getGravatar());
