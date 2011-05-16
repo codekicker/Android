@@ -5,17 +5,9 @@ import java.util.Date;
 
 import roboguice.activity.RoboListActivity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,48 +21,32 @@ import android.widget.Toast;
 import com.google.inject.Inject;
 
 import de.codekicker.app.android.R;
+import de.codekicker.app.android.business.IAnswerSender;
+import de.codekicker.app.android.business.IAnswerSender.AnswerSentCallback;
 import de.codekicker.app.android.business.INetwork;
+import de.codekicker.app.android.business.IQuestionDetailsDownloader;
+import de.codekicker.app.android.business.IQuestionDetailsDownloader.DownloadDoneCallback;
+import de.codekicker.app.android.business.IVoteDoneCallbackFactory;
+import de.codekicker.app.android.business.IVoter;
+import de.codekicker.app.android.business.VoteType;
+import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
-import de.codekicker.app.android.service.QuestionDetailsDownloader;
-import de.codekicker.app.android.service.SendAnswerService;
 import de.codekicker.app.android.widget.QuestionDetailsAdapter;
 
 public class QuestionDetails extends RoboListActivity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
 	@Inject private LayoutInflater layoutInflater;
 	@Inject private IPreferenceManager preferenceManager;
+	@Inject private IQuestionDetailsDownloader questionDetailsDownloader;
 	@Inject private INetwork network;
+	@Inject private IAnswerSender answerSender;
+	@Inject private IVoter voter;
+	@Inject private IVoteDoneCallbackFactory voteDoneCallbackFactory;
 	private ProgressDialog progressDialog;
 	private Question question;
 	private EditText editTextYourAnswer;
-	private BroadcastReceiver questionDownloadedReceiver = new BroadcastReceiver() {
-		private static final String TAG = "QuestionDownloadedReceiver";
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.v(TAG, "Broadcast received");
-			question = (Question) intent.getParcelableExtra("de.codekicker.app.android.Question");
-			fillView(question);
-			progressDialog.dismiss();
-		}
-	};
-	private BroadcastReceiver answerSentReceiver = new BroadcastReceiver() {
-		private static final String TAG = "AnswerSentReceiver";
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.v(TAG, "Broadcast received");
-			boolean successful = intent.getBooleanExtra("successful", false);
-			progressDialog.dismiss();
-			if (successful) {
-				Log.v(TAG, "Answer was successful sent. Navigating back.");
-				QuestionDetails.this.setResult(QuestionDetailsResultCodes.ANSWERED);
-				QuestionDetails.this.finish();
-			}
-		}
-	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,48 +56,17 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
 			progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-			Question question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
-			Intent intent = new Intent(this, QuestionDetailsDownloader.class);
-			intent.putExtra("de.codekicker.app.android.Question", question);
-			startService(intent);
+			question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
+			questionDetailsDownloader.downloadDetails(question, new DownloadDoneCallback() {
+				@Override
+				public void downloadDone(Question question) {
+					fillView(question);
+					progressDialog.dismiss();
+				}
+			});
 		} else {
 			question = (Question) nonConfigurationInstance;
 			fillView(question);
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		registerReceiver(questionDownloadedReceiver, new IntentFilter("de.codekicker.app.android.QUESTION_DOWNLOAD_FINISHED"));
-		registerReceiver(answerSentReceiver, new IntentFilter("de.codekicker.app.android.ANSWER_SENT"));
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(questionDownloadedReceiver);
-		unregisterReceiver(answerSentReceiver);
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.questions_details_context_menu, menu);
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menuItemUpvote:
-			voteUp();
-			return true;
-		case R.id.menuItemDownvote:
-			voteDown();
-			return true;
-		default:
-			return super.onContextItemSelected(item);
 		}
 	}
 	
@@ -162,46 +107,80 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		ListView listView = getListView();
 		listView.addHeaderView(headerLinearLayout);
 		listView.addFooterView(footerLinearLayout);
-		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
-		setListAdapter(adapter);
+		ImageView imageViewUpvote = (ImageView) findViewById(R.id.imageViewUpvote);
+		imageViewUpvote.setOnClickListener(this);
+		ImageView imageViewDownvote = (ImageView) findViewById(R.id.imageViewDownvote);
+		imageViewDownvote.setOnClickListener(this);
 		int visibility = preferenceManager.getIsUserAuthenticated() ? View.VISIBLE : View.GONE;
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
 		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
 		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
 		editTextYourAnswer.setVisibility(visibility);
+		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
+		setListAdapter(adapter);
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+		case R.id.imageViewUpvote:
+			voteUp(0, question.getAnswerId());
+			break;
+		case R.id.imageViewDownvote:
+			voteDown(0, question.getAnswerId());
+			break;
 		case R.id.buttonAnswer:
-			if (!network.isOnline()) {
-				Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
-				return;
-			}
-			progressDialog = ProgressDialog.show(this, null, getString(R.string.sendingAnswer));
-			Intent intent = new Intent(this, SendAnswerService.class);
-			intent.putExtra("de.codekicker.app.android.Question", question);
-			intent.putExtra("de.codekicker.app.android.AnswerBody", editTextYourAnswer.getText().toString());
-			startService(intent);
+			sendAnswer();
 			break;
 		}
 	}
 	
-	private void voteUp() {
+	public void onUpvoteClick(int rowPosition, Answer answer) {
+		voteUp(rowPosition, answer.getId());
+	}
+	
+	public void onDownvoteClick(int rowPosition, Answer answer) {
+		voteDown(rowPosition, answer.getId());
+	}
+	
+	private void sendAnswer() {
 		if (!network.isOnline()) {
 			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+			return;
+		}
+		progressDialog = ProgressDialog.show(this, null, getString(R.string.sendingAnswer));
+		answerSender.sendAnswer(question, editTextYourAnswer.getText().toString(), new AnswerSentCallback() {
+			@Override
+			public void answerSent(boolean successful, String serverErrorMessage) {
+				progressDialog.dismiss();
+				if (successful) {
+					Log.v(TAG, "Answer was successful sent. Navigating back");
+					Toast.makeText(QuestionDetails.this, QuestionDetails.this.getString(R.string.sendAnswerSuccessful), Toast.LENGTH_LONG).show();
+					QuestionDetails.this.setResult(QuestionDetailsResultCodes.ANSWERED);
+					QuestionDetails.this.finish();
+				} else {
+					Log.e(TAG, "Answer not successful sent");
+					String toastText = serverErrorMessage == null ? QuestionDetails.this.getString(R.string.sendAnswerFailed) : serverErrorMessage;
+					Toast.makeText(QuestionDetails.this, toastText, Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+	}
+	
+	private void voteUp(int rowPosition, int id) {
+		if (network.isOnline()) {
+			voter.voteUp(id, voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
 		} else {
-			
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
 		}
 	}
 	
-	private void voteDown() {
-		if (!network.isOnline()) {
-			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+	private void voteDown(int rowPosition, int id) {
+		if (network.isOnline()) {
+			voter.voteDown(id, voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
 		} else {
-			
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
 		}
 	}
 }

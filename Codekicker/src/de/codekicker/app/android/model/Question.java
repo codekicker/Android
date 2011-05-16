@@ -21,7 +21,8 @@ public class Question implements Parcelable {
 		}
 	};
 	
-	private int id;
+	private int questionId;
+	private int answerId;
 	private String title;
 	private String urlName;
 	private Date askDate;
@@ -34,10 +35,10 @@ public class Question implements Parcelable {
 	private User user;
 	private List<Answer> answers;
 	
-	public Question(int id, String title, String urlName, Date askDate,
+	public Question(int questionId, String title, String urlName, Date askDate,
 					String questionBody, boolean hasAcceptedAnswer, int voteScore,
 					int answerCount, int viewCount, String[] tags, User user) {
-		this.id = id;
+		this.questionId = questionId;
 		this.title = title;
 		this.urlName = urlName;
 		this.askDate = askDate;
@@ -52,7 +53,7 @@ public class Question implements Parcelable {
 	}
 	
 	private Question(Parcel parcel) {
-		id = parcel.readInt();
+		questionId = parcel.readInt();
 		title = parcel.readString();
 		urlName = parcel.readString();
 		askDate = new Date(parcel.readLong());
@@ -68,7 +69,7 @@ public class Question implements Parcelable {
 	}
 	
 	public int getId() {
-		return id;
+		return questionId;
 	}
 
 	public String getTitle() {
@@ -110,6 +111,14 @@ public class Question implements Parcelable {
 	public User getUser() {
 		return user;
 	}
+	
+	public int getAnswerId() {
+		return this.answerId;
+	}
+	
+	public void setAnswerId(int answerId) {
+		this.answerId = answerId;
+	}
 
 	public void add(Answer answer) {
 		answers.add(answer);
@@ -126,7 +135,7 @@ public class Question implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeInt(id);
+		dest.writeInt(questionId);
 		dest.writeString(title);
 		dest.writeString(urlName);
 		dest.writeLong(askDate.getTime());
