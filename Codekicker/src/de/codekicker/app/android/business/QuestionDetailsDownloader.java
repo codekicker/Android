@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,6 +52,7 @@ class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQues
 			Log.v(TAG, "Downloading question details");
 			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "id=" + question.getId());
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			User questionUser = question.getUser();
 			Log.v(TAG, "Downloading question Gravatar Bitmap");
 			questionUser.setGravatar(gravatarBitmapDownloader.downloadBitmap(questionUser.getGravatarHash()));

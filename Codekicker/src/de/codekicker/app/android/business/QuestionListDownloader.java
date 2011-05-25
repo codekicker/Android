@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +47,7 @@ class QuestionListDownloader extends RoboAsyncTask<List<Question>> implements IQ
 			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "sortOrder=AskDateTime&filterMinID=0");
 			Log.v(TAG, "Creating question models");
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			JSONObject jsonObject = new JSONObject(json);
 			JSONArray rawQuestions = jsonObject.getJSONArray("Questions");
 			for (int i = 0; i < rawQuestions.length(); i++) {
