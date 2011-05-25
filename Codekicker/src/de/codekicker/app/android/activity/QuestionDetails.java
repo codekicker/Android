@@ -8,6 +8,9 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -33,7 +36,7 @@ import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
-import de.codekicker.app.android.widget.QuestionDetailsAdapter;
+import de.codekicker.app.android.widget.IQuestionDetailsAdapter;
 
 public class QuestionDetails extends RoboListActivity implements OnClickListener {
 	private static final String TAG = "QuestionDetails";
@@ -44,32 +47,72 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	@Inject private IAnswerSender answerSender;
 	@Inject private IVoter voter;
 	@Inject private IVoteDoneCallbackFactory voteDoneCallbackFactory;
+	@Inject private IQuestionDetailsAdapter questionDetailsAdapter;
 	private ProgressDialog progressDialog;
 	private Question question;
 	private EditText editTextYourAnswer;
+	private boolean commentsVisible;
+	private LinearLayout headerLinearLayout;
+	private LinearLayout footerLinearLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		registerForContextMenu(getListView());
+		headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
+		footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
-			progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-			question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
-			questionDetailsDownloader.downloadDetails(question, new DownloadDoneCallback() {
-				@Override
-				public void downloadDone(Question question) {
-					fillView(question);
-					progressDialog.dismiss();
-				}
-			});
+			downloadQuestion();
 		} else {
 			question = (Question) nonConfigurationInstance;
 			fillView(question);
 		}
 	}
 	
+	private void downloadQuestion() {
+		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
+		question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
+		questionDetailsDownloader.downloadDetails(question, new DownloadDoneCallback() {
+			@Override
+			public void downloadDone(Question question) {
+				fillView(question);
+				progressDialog.dismiss();
+			}
+		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.question_details_options_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.findItem(R.id.menuItemShowComments).setVisible(!commentsVisible);
+		menu.findItem(R.id.menuItemHideComments).setVisible(commentsVisible);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuItemShowComments:
+			showComments();
+			break;
+		case R.id.menuItemHideComments:
+			hideComments();
+			break;
+		case R.id.menuItemRefresh:
+			downloadQuestion();
+			break;
+		}
+		return true;
+	}
+
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		return question;
@@ -78,8 +121,11 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	private void fillView(Question question) {
 		Log.v(TAG, "Filling view");
 		User user = question.getUser();
-		LinearLayout headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
-		LinearLayout footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
+		ListView listView = getListView();
+		boolean foo = listView.removeHeaderView(headerLinearLayout);
+		listView.addHeaderView(headerLinearLayout);
+		boolean bar = listView.removeFooterView(footerLinearLayout);
+		listView.addFooterView(footerLinearLayout);
 		Date date = question.getAskDate();
 		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
 		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
@@ -104,9 +150,6 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		textViewAnswerCount.setText(String.format(getString(answerCountText), question.getAnswerCount()));
 		int commentCountText = 0 == 1 ? R.string.commentCount : R.string.commentsCount;
 		textViewComments.setText(String.format(getString(commentCountText), 0));
-		ListView listView = getListView();
-		listView.addHeaderView(headerLinearLayout);
-		listView.addFooterView(footerLinearLayout);
 		ImageView imageViewUpvote = (ImageView) findViewById(R.id.imageViewUpvote);
 		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
 		imageViewUpvote.setOnClickListener(this);
@@ -117,10 +160,24 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
 		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
+		setListAdapter(questionDetailsAdapter);
 		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
 		editTextYourAnswer.setVisibility(visibility);
-		QuestionDetailsAdapter adapter = new QuestionDetailsAdapter(this, preferenceManager, R.layout.question_details_list_item, question.getAnswers(), layoutInflater);
-		setListAdapter(adapter);
+		// Avoid multiple notifications to the view
+		questionDetailsAdapter.setNotifyOnChange(false);
+		questionDetailsAdapter.clear();
+		for (Answer a : question.getAnswers()) {
+			questionDetailsAdapter.add(a);
+		}
+		questionDetailsAdapter.notifyDataSetChanged();
+	}
+	
+	private void showComments() {
+		commentsVisible = true;
+	}
+
+	private void hideComments() {
+		commentsVisible = false;
 	}
 
 	@Override

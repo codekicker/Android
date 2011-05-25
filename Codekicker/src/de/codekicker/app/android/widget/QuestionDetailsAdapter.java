@@ -1,6 +1,7 @@
 package de.codekicker.app.android.widget;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
-public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
+public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQuestionDetailsAdapter {
 	private final QuestionDetails questionDetails;
 	private final IPreferenceManager preferenceManager;
 	private final LayoutInflater inflater;
@@ -51,8 +52,15 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> {
 			questionDetails.onDownvoteClick(rowPosition, answer);
 		}
 	}
-
+	
 	public QuestionDetailsAdapter(QuestionDetails questionDetails,
+			IPreferenceManager preferenceManager,
+			int listItemResourceId,
+			LayoutInflater inflater) {
+		this(questionDetails, preferenceManager, listItemResourceId, new ArrayList<Answer>(), inflater);
+	}
+
+	private QuestionDetailsAdapter(QuestionDetails questionDetails,
 			IPreferenceManager preferenceManager,
 			int listItemResourceId,
 			List<Answer> answers,
