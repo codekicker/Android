@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/menuItemShowComments"
+		  android:icon="@drawable/menu_comments"
+		  android:title="@string/showComments" />
+	<item android:id="@+id/menuItemHideComments"
+		  android:icon="@drawable/menu_comments"
+		  android:title="@string/hideComments"
+		  android:visible="false" />
+	<item android:id="@+id/menuItemRefresh"
+		  android:icon="@drawable/menu_refresh"
+		  android:title="@string/refresh" />
+</menu>

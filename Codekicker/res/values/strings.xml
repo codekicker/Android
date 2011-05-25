@@ -27,4 +27,6 @@
 	<string name="sendAnswerFailed">Antworten fehlgeschlagen</string>
 	<string name="sendingAnswer">Sende Antwort</string>
 	<string name="errorSendingVote">Fehler beim Senden des Votes</string>
+	<string name="showComments">Zeige Kommentare</string>
+	<string name="hideComments">Verberge Kommentare</string>
 </resources>
