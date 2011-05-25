@@ -15,7 +15,7 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;
 	private int answerId, voteScore;
-	private VoteDoneCallback callback;
+	private IVoteDoneCallback callback;
 	private String voteType, errorMessage;
 	
 	@Inject
@@ -24,7 +24,7 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 		this.serverRequest = serverRequest;
 	}
 	
-	public void voteUp(int answerId, VoteDoneCallback callback) {
+	public void voteUp(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Voting up");
 		this.answerId = answerId;
 		this.callback = callback;
@@ -32,7 +32,7 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 		execute();
 	}
 	
-	public void voteDown(int answerId, VoteDoneCallback callback) {
+	public void voteDown(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Voting down");
 		this.answerId = answerId;
 		this.callback = callback;
@@ -40,7 +40,7 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 		execute();
 	}
 	
-	public void voteReset(int answerId, VoteDoneCallback callback) {
+	public void voteReset(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Resetting vote");
 		this.answerId = answerId;
 		this.callback = callback;
@@ -63,7 +63,7 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 			if (errorCode != null && !errorCode.trim().equalsIgnoreCase("null")) {
 				successful = false;
 				String errorMessage = jsonResult.getString("ErrorMessage");
-				if (errorMessage != null && errorCode.trim().length() > 0) {
+				if (errorMessage != null && !errorMessage.trim().equalsIgnoreCase("null")) {
 					this.errorMessage = errorMessage;
 				}
 			} else {

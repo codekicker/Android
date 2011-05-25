@@ -22,6 +22,7 @@ public class Answer implements Parcelable {
 	};
 
 	private final int id;
+	private final boolean isQuestion;
 	private final Date createDate;
 	private final String textBody;
 	private final int voteScore;
@@ -29,8 +30,9 @@ public class Answer implements Parcelable {
 	private final User user;
 	private final List<Comment> comments;
 	
-	public Answer(int id, Date createDate, String textBody, int voteScore, boolean isAccepted, User user, List<Comment> comments) {
+	public Answer(int id, boolean isQuestion, Date createDate, String textBody, int voteScore, boolean isAccepted, User user, List<Comment> comments) {
 		this.id = id;
+		this.isQuestion = isQuestion;
 		this.createDate = createDate;
 		this.textBody = textBody;
 		this.voteScore = voteScore;
@@ -41,6 +43,7 @@ public class Answer implements Parcelable {
 
 	private Answer(Parcel parcel) {
 		id = parcel.readInt();
+		isQuestion = parcel.readInt() == 1;
 		createDate = new Date(parcel.readLong());
 		textBody = parcel.readString();
 		voteScore = parcel.readInt();
@@ -86,6 +89,7 @@ public class Answer implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
+		dest.writeInt(isQuestion ? 1 : 0);
 		dest.writeLong(createDate.getTime());
 		dest.writeString(textBody);
 		dest.writeInt(voteScore);

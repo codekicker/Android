@@ -1,9 +1,6 @@
 package de.codekicker.app.android.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -22,7 +19,6 @@ public class Question implements Parcelable {
 	};
 	
 	private int questionId;
-	private int answerId;
 	private String title;
 	private String urlName;
 	private Date askDate;
@@ -33,7 +29,6 @@ public class Question implements Parcelable {
 	private int viewCount;
 	private String[] tags;
 	private User user;
-	private List<Answer> answers;
 	
 	public Question(int questionId, String title, String urlName, Date askDate,
 					String questionBody, boolean hasAcceptedAnswer, int voteScore,
@@ -49,7 +44,6 @@ public class Question implements Parcelable {
 		this.viewCount = viewCount;
 		this.tags = tags;
 		this.user = user;
-		answers = new ArrayList<Answer>();
 	}
 	
 	private Question(Parcel parcel) {
@@ -64,8 +58,6 @@ public class Question implements Parcelable {
 		viewCount = parcel.readInt();
 		tags = parcel.createStringArray();
 		user = parcel.readParcelable(User.class.getClassLoader());
-		answers = new ArrayList<Answer>();
-		parcel.readTypedList(answers, Answer.CREATOR);
 	}
 	
 	public int getId() {
@@ -111,22 +103,6 @@ public class Question implements Parcelable {
 	public User getUser() {
 		return user;
 	}
-	
-	public int getAnswerId() {
-		return this.answerId;
-	}
-	
-	public void setAnswerId(int answerId) {
-		this.answerId = answerId;
-	}
-
-	public void add(Answer answer) {
-		answers.add(answer);
-	}
-	
-	public List<Answer> getAnswers() {
-		return Collections.unmodifiableList(answers);
-	}
 
 	@Override
 	public int describeContents() {
@@ -146,6 +122,5 @@ public class Question implements Parcelable {
 		dest.writeInt(viewCount);
 		dest.writeStringArray(tags);
 		dest.writeParcelable(user, flags);
-		dest.writeTypedList(answers);
 	}
 }

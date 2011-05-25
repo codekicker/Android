@@ -11,7 +11,7 @@ public class BindingModule extends AbstractAndroidModule {
 		bind(IServerRequest.class).to(ServerRequest.class);
 		bind(IQuestionListDownloader.class).to(QuestionListDownloader.class);
 		bind(IGravatarBitmapDownloader.class).to(GravatarBitmapDownloader.class);
-		bind(IQuestionDetailsDownloader.class).to(QuestionDetailsDownloader.class);
+		bind(IAnswersDownloader.class).to(AnswersDownloader.class);
 		bind(IAnswerSender.class).to(AnswerSender.class);
 		bind(IVoter.class).to(Voter.class);
 		bind(IVoteDoneCallbackFactory.class).to(VoteDoneCallbackFactory.class);

@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import roboguice.util.RoboAsyncTask;
-
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -21,7 +20,7 @@ import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
-class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQuestionDetailsDownloader {
+class AnswersDownloader extends RoboAsyncTask<List<Answer>> implements IAnswersDownloader {
 	private static final String TAG = "QuestionDetailsDownloader";
 	private static final String DOWNLOAD_URL = "QuestionView.json";
 	private final IPreferenceManager preferenceManager;
@@ -31,7 +30,7 @@ class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQues
 	private DownloadDoneCallback callback;
 	
 	@Inject
-	public QuestionDetailsDownloader(IPreferenceManager preferenceManager,
+	public AnswersDownloader(IPreferenceManager preferenceManager,
 			IServerRequest serverRequest,
 			IGravatarBitmapDownloader gravatarBitmapDownloader) {
 		this.preferenceManager = preferenceManager;
@@ -47,7 +46,8 @@ class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQues
 	}
 
 	@Override
-	public Question call() throws Exception {
+	public List<Answer> call() throws Exception {
+		List<Answer> answers = new ArrayList<Answer>();
 		try {
 			Log.v(TAG, "Downloading question details");
 			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "id=" + question.getId());
@@ -61,10 +61,6 @@ class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQues
 			Log.v(TAG, "Creating Answers");
 			for (int i = 0; i < rawAnswers.length(); i++) {
 				JSONObject rawAnswer = rawAnswers.getJSONObject(i);
-				if (rawAnswer.getBoolean("IsQuestion")) {
-					question.setAnswerId(rawAnswer.optInt("ID", -1));
-					continue;
-				}
 				JSONArray jsonComments = rawAnswer.getJSONArray("Comments");
 				int jsonCommentsLength = jsonComments.length();
 				List<Comment> comments = new ArrayList<Comment>(jsonCommentsLength);
@@ -95,24 +91,25 @@ class QuestionDetailsDownloader extends RoboAsyncTask<Question> implements IQues
 						gravatarBitmapDownloader.downloadBitmap(gravatarId));
 				Date createDateTime = simpleDateFormat.parse(rawAnswer.getString("CreateDateTime"));
 				Answer answer = new Answer(rawAnswer.optInt("ID", -1),
+						rawAnswer.getBoolean("IsQuestion"),
 						createDateTime,
 						rawAnswer.getString("TextBody"),
 						rawAnswer.getInt("VoteScore"),
-						rawAnswer.getBoolean("IsAccepted"),
+						rawAnswer.optBoolean("IsAccepted", false),
 						user,
 						comments);
-				question.add(answer);
+				answers.add(answer);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
 		Log.v(TAG, "Downloading question details done");
-		return question;
+		return answers;
 	}
 	
 	@Override
-	protected void onSuccess(Question question) throws Exception {
-		super.onSuccess(question);
-		callback.downloadDone(question);
+	protected void onSuccess(List<Answer> answers) throws Exception {
+		super.onSuccess(answers);
+		callback.downloadDone(answers);
 	}
 }

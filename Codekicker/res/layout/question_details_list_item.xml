@@ -62,4 +62,16 @@
 			android:id="@+id/textViewComments"
 			style="@style/QuestionDetails.Comments"
 			android:text="5 Kommentare" />
+	<LinearLayout android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:id="@+id/answersCountLinearLayout"
+				android:visibility="gone">
+		<TextView android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:text="@string/answersCount"
+				android:id="@+id/textViewAnswerCount"
+				style="@style/QuestionDetails.AnswerCount"/>
+		<View style="@style/QuestionDetails.Divider" />
+	</LinearLayout>
 </LinearLayout>

@@ -9,6 +9,7 @@
 			android:layout_height="wrap_content"
 			style="@style/QuestionsList.Title"
 			android:id="@+id/textViewTitle" android:text="Title"/>
+	<!--
 	<include layout="@layout/question_details_list_item" />
 	<LinearLayout android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
@@ -21,4 +22,5 @@
 				style="@style/QuestionDetails.AnswerCount"/>
 		<View style="@style/QuestionDetails.Divider" />
 	</LinearLayout>
+	-->
 </LinearLayout>

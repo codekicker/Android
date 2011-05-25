@@ -1,7 +1,7 @@
 package de.codekicker.app.android.activity;
 
-import java.text.DateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import roboguice.activity.RoboListActivity;
 import android.app.ProgressDialog;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,14 +26,13 @@ import de.codekicker.app.android.R;
 import de.codekicker.app.android.business.IAnswerSender;
 import de.codekicker.app.android.business.IAnswerSender.AnswerSentCallback;
 import de.codekicker.app.android.business.INetwork;
-import de.codekicker.app.android.business.IQuestionDetailsDownloader;
-import de.codekicker.app.android.business.IQuestionDetailsDownloader.DownloadDoneCallback;
+import de.codekicker.app.android.business.IAnswersDownloader;
+import de.codekicker.app.android.business.IAnswersDownloader.DownloadDoneCallback;
 import de.codekicker.app.android.business.IVoteDoneCallbackFactory;
 import de.codekicker.app.android.business.IVoter;
 import de.codekicker.app.android.business.VoteType;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Question;
-import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.widget.IQuestionDetailsAdapter;
 
@@ -42,7 +40,7 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	private static final String TAG = "QuestionDetails";
 	@Inject private LayoutInflater layoutInflater;
 	@Inject private IPreferenceManager preferenceManager;
-	@Inject private IQuestionDetailsDownloader questionDetailsDownloader;
+	@Inject private IAnswersDownloader questionDetailsDownloader;
 	@Inject private INetwork network;
 	@Inject private IAnswerSender answerSender;
 	@Inject private IVoter voter;
@@ -50,34 +48,50 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	@Inject private IQuestionDetailsAdapter questionDetailsAdapter;
 	private ProgressDialog progressDialog;
 	private Question question;
+	private List<Answer> answers = new ArrayList<Answer>();
 	private EditText editTextYourAnswer;
 	private boolean commentsVisible;
-	private LinearLayout headerLinearLayout;
-	private LinearLayout footerLinearLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		registerForContextMenu(getListView());
-		headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
-		footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
+		question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
+		ListView listView = getListView();
+		registerForContextMenu(listView);
+		fillHeaderAndFooter(listView);
 		// Handle NonConfigurationInstace because screen orientation could have changed
 		Object nonConfigurationInstance = getLastNonConfigurationInstance();
 		if (nonConfigurationInstance == null) {
 			downloadQuestion();
 		} else {
-			question = (Question) nonConfigurationInstance;
-			fillView(question);
+			answers = (List<Answer>) nonConfigurationInstance;
+			fillView(answers);
 		}
+	}
+	
+	private void fillHeaderAndFooter(ListView listView) {
+		LinearLayout headerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_header, null);
+		LinearLayout footerLinearLayout = (LinearLayout) layoutInflater.inflate(R.layout.question_details_footer, null);
+		listView.addHeaderView(headerLinearLayout);
+		listView.addFooterView(footerLinearLayout);
+		TextView textViewTitle = (TextView) headerLinearLayout.findViewById(R.id.textViewTitle);
+		textViewTitle.setText(question.getTitle());
+		int visibility = preferenceManager.isUserAuthenticated() ? View.VISIBLE : View.GONE;
+		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
+		buttonAnswer.setVisibility(visibility);
+		buttonAnswer.setOnClickListener(this);
+		setListAdapter(questionDetailsAdapter);
+		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
+		editTextYourAnswer.setVisibility(visibility);
 	}
 	
 	private void downloadQuestion() {
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-		question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
 		questionDetailsDownloader.downloadDetails(question, new DownloadDoneCallback() {
 			@Override
-			public void downloadDone(Question question) {
-				fillView(question);
+			public void downloadDone(List<Answer> answers) {
+				QuestionDetails.this.answers = answers;
+				fillView(answers);
 				progressDialog.dismiss();
 			}
 		});
@@ -115,59 +129,16 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		return question;
+		return answers;
 	}
 	
-	private void fillView(Question question) {
+	private void fillView(List<Answer> answers) {
 		Log.v(TAG, "Filling view");
-		User user = question.getUser();
-		ListView listView = getListView();
-		boolean foo = listView.removeHeaderView(headerLinearLayout);
-		listView.addHeaderView(headerLinearLayout);
-		boolean bar = listView.removeFooterView(footerLinearLayout);
-		listView.addFooterView(footerLinearLayout);
-		Date date = question.getAskDate();
-		String askDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
-		String askTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
-		askDateString = String.format(getString(R.string.askDate), askDateString, askTimeString);
-		TextView textViewTitle = (TextView) headerLinearLayout.findViewById(R.id.textViewTitle);
-		TextView textViewVoteScore = (TextView) headerLinearLayout.findViewById(R.id.textViewVoteScore);
-		TextView textViewQuestionBody = (TextView) headerLinearLayout.findViewById(R.id.textViewQuestionBody);
-		TextView textViewaskDate = (TextView) headerLinearLayout.findViewById(R.id.textViewAskDate);
-		ImageView imageViewGravatar = (ImageView) headerLinearLayout.findViewById(R.id.imageViewGravatar);
-		TextView textViewUserName = (TextView) headerLinearLayout.findViewById(R.id.textViewUserName);
-		TextView textViewReputation = (TextView) headerLinearLayout.findViewById(R.id.textViewReputation);
-		TextView textViewAnswerCount = (TextView) headerLinearLayout.findViewById(R.id.textViewAnswerCount);
-		TextView textViewComments = (TextView) headerLinearLayout.findViewById(R.id.textViewComments);
-		textViewTitle.setText(question.getTitle());
-		textViewVoteScore.setText(Integer.toString(question.getVoteScore()));
-		textViewQuestionBody.setText(question.getQuestionBody());
-		textViewaskDate.setText(askDateString);
-		imageViewGravatar.setImageBitmap(user.getGravatar());
-		textViewUserName.setText(user.getName());
-		textViewReputation.setText(Integer.toString(user.getReputation()));
-		int answerCountText = question.getAnswerCount() == 1 ? R.string.answerCount : R.string.answersCount;
-		textViewAnswerCount.setText(String.format(getString(answerCountText), question.getAnswerCount()));
-		int commentCountText = 0 == 1 ? R.string.commentCount : R.string.commentsCount;
-		textViewComments.setText(String.format(getString(commentCountText), 0));
-		ImageView imageViewUpvote = (ImageView) findViewById(R.id.imageViewUpvote);
-		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewUpvote.setOnClickListener(this);
-		ImageView imageViewDownvote = (ImageView) findViewById(R.id.imageViewDownvote);
-		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewDownvote.setOnClickListener(this);
-		int visibility = preferenceManager.isUserAuthenticated() ? View.VISIBLE : View.GONE;
-		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
-		buttonAnswer.setVisibility(visibility);
-		buttonAnswer.setOnClickListener(this);
-		setListAdapter(questionDetailsAdapter);
-		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
-		editTextYourAnswer.setVisibility(visibility);
 		// Avoid multiple notifications to the view
 		questionDetailsAdapter.setNotifyOnChange(false);
 		questionDetailsAdapter.clear();
-		for (Answer a : question.getAnswers()) {
-			questionDetailsAdapter.add(a);
+		for (Answer answer : answers) {
+			questionDetailsAdapter.add(answer);
 		}
 		questionDetailsAdapter.notifyDataSetChanged();
 	}
@@ -183,12 +154,6 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.imageViewUpvote:
-			voteUp(0, question.getAnswerId());
-			break;
-		case R.id.imageViewDownvote:
-			voteDown(0, question.getAnswerId());
-			break;
 		case R.id.buttonAnswer:
 			sendAnswer();
 			break;
@@ -196,11 +161,19 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	}
 	
 	public void onUpvoteClick(int rowPosition, Answer answer) {
-		voteUp(rowPosition, answer.getId());
+		if (network.isOnline()) {
+			voter.voteUp(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
+		} else {
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	public void onDownvoteClick(int rowPosition, Answer answer) {
-		voteDown(rowPosition, answer.getId());
+		if (network.isOnline()) {
+			voter.voteDown(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
+		} else {
+			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	private void sendAnswer() {
@@ -225,21 +198,5 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 				}
 			}
 		});
-	}
-	
-	private void voteUp(int rowPosition, int id) {
-		if (network.isOnline()) {
-			voter.voteUp(id, voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
-		} else {
-			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
-		}
-	}
-	
-	private void voteDown(int rowPosition, int id) {
-		if (network.isOnline()) {
-			voter.voteDown(id, voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
-		} else {
-			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
-		}
 	}
 }

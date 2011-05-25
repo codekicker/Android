@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
@@ -106,6 +107,16 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQue
 		textViewReputation.setText(Integer.toString(user.getReputation()));
 		int commentCountText = answer.getComments().size() == 1 ? R.string.commentCount : R.string.commentsCount;
 		textViewComments.setText(String.format(questionDetails.getString(commentCountText), answer.getComments().size()));
+		LinearLayout answersCountLinearLayout = (LinearLayout) listItemView.findViewById(R.id.answersCountLinearLayout);
+		if (position == 0) {
+			TextView textViewAnswerCount = (TextView) answersCountLinearLayout.findViewById(R.id.textViewAnswerCount);
+			int realAnswers = answers.size() - 1;
+			int answerCountText = realAnswers == 1 ? R.string.answerCount : R.string.answersCount;
+			textViewAnswerCount.setText(String.format(questionDetails.getString(answerCountText), realAnswers));
+			answersCountLinearLayout.setVisibility(View.VISIBLE);
+		} else {
+			answersCountLinearLayout.setVisibility(View.GONE);
+		}
 		return listItemView;
 	}
 }
