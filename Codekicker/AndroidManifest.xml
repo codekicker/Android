@@ -18,6 +18,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".activity.QuestionDetails" />
+		<activity android:name="activity.QuestionDetails" />
 		<activity android:name=".activity.Preferences" />
 	</application>
 </manifest>

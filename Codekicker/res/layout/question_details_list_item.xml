@@ -19,7 +19,8 @@
 			<TextView android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:text="0"
-					style="@style/QuestionDetails.Votes" android:id="@+id/textViewVoteScore"/>
+					style="@style/QuestionDetails.Votes"
+					android:id="@+id/textViewVoteScore"/>
 			<ImageView android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:id="@+id/imageViewDownvote"

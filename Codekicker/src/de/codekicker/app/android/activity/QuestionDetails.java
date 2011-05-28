@@ -3,7 +3,7 @@ package de.codekicker.app.android.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import roboguice.activity.RoboListActivity;
+import roboguice.activity.RoboExpandableListActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,19 +15,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.business.IAnswerSender;
 import de.codekicker.app.android.business.IAnswerSender.AnswerSentCallback;
-import de.codekicker.app.android.business.INetwork;
 import de.codekicker.app.android.business.IAnswersDownloader;
 import de.codekicker.app.android.business.IAnswersDownloader.DownloadDoneCallback;
+import de.codekicker.app.android.business.INetwork;
 import de.codekicker.app.android.business.IVoteDoneCallbackFactory;
 import de.codekicker.app.android.business.IVoter;
 import de.codekicker.app.android.business.VoteType;
@@ -36,8 +38,8 @@ import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.widget.IQuestionDetailsAdapter;
 
-public class QuestionDetails extends RoboListActivity implements OnClickListener {
-	private static final String TAG = "QuestionDetails";
+public class QuestionDetails extends RoboExpandableListActivity implements OnClickListener {
+	private static final String TAG = "QuestionDetails2";
 	@Inject private LayoutInflater layoutInflater;
 	@Inject private IPreferenceManager preferenceManager;
 	@Inject private IAnswersDownloader questionDetailsDownloader;
@@ -45,18 +47,20 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	@Inject private IAnswerSender answerSender;
 	@Inject private IVoter voter;
 	@Inject private IVoteDoneCallbackFactory voteDoneCallbackFactory;
-	@Inject private IQuestionDetailsAdapter questionDetailsAdapter;
+	@Inject private Provider<IQuestionDetailsAdapter> listAdapterProvider;
+	private IQuestionDetailsAdapter listAdapter;
 	private ProgressDialog progressDialog;
 	private Question question;
 	private List<Answer> answers = new ArrayList<Answer>();
 	private EditText editTextYourAnswer;
-	private boolean commentsVisible;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
-		ListView listView = getListView();
+		listAdapter = listAdapterProvider.get();
+		ExpandableListView listView = getExpandableListView();
+		listView.setGroupIndicator(getResources().getDrawable(R.drawable.question_details_comments_state));
 		registerForContextMenu(listView);
 		fillHeaderAndFooter(listView);
 		// Handle NonConfigurationInstace because screen orientation could have changed
@@ -80,7 +84,7 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 		Button buttonAnswer = (Button) findViewById(R.id.buttonAnswer);
 		buttonAnswer.setVisibility(visibility);
 		buttonAnswer.setOnClickListener(this);
-		setListAdapter(questionDetailsAdapter);
+		setListAdapter(listAdapter);
 		editTextYourAnswer = (EditText) findViewById(R.id.editTextYourAnswer);
 		editTextYourAnswer.setVisibility(visibility);
 	}
@@ -105,21 +109,8 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.menuItemShowComments).setVisible(!commentsVisible);
-		menu.findItem(R.id.menuItemHideComments).setVisible(commentsVisible);
-		return true;
-	}
-	
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuItemShowComments:
-			showComments();
-			break;
-		case R.id.menuItemHideComments:
-			hideComments();
-			break;
 		case R.id.menuItemRefresh:
 			downloadQuestion();
 			break;
@@ -135,22 +126,14 @@ public class QuestionDetails extends RoboListActivity implements OnClickListener
 	private void fillView(List<Answer> answers) {
 		Log.v(TAG, "Filling view");
 		// Avoid multiple notifications to the view
-		questionDetailsAdapter.setNotifyOnChange(false);
-		questionDetailsAdapter.clear();
+		//listAdapter.setNotifyOnChange(false);
+		listAdapter.clear();
 		for (Answer answer : answers) {
-			questionDetailsAdapter.add(answer);
+			listAdapter.add(answer);
 		}
-		questionDetailsAdapter.notifyDataSetChanged();
+		listAdapter.notifyDataSetChanged();
 	}
 	
-	private void showComments() {
-		commentsVisible = true;
-	}
-
-	private void hideComments() {
-		commentsVisible = false;
-	}
-
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {

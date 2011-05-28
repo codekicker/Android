@@ -7,24 +7,25 @@ import java.util.List;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.View.OnClickListener;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
 import de.codekicker.app.android.model.Answer;
+import de.codekicker.app.android.model.Comment;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
-public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQuestionDetailsAdapter {
+public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements IQuestionDetailsAdapter {
+	private static final String TAG = "QuestionDetailsAdapter2";
+	private List<Answer> answers = new ArrayList<Answer>();
 	private final QuestionDetails questionDetails;
-	private final IPreferenceManager preferenceManager;
 	private final LayoutInflater inflater;
-	private final int listItemResourceId;
-	private final List<Answer> answers;
+	private final IPreferenceManager preferenceManager;
 	private class UpvoteClickListener implements OnClickListener {
 		private final Answer answer;
 		private final int rowPosition;
@@ -55,32 +56,66 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQue
 	}
 	
 	public QuestionDetailsAdapter(QuestionDetails questionDetails,
-			IPreferenceManager preferenceManager,
-			int listItemResourceId,
-			LayoutInflater inflater) {
-		this(questionDetails, preferenceManager, listItemResourceId, new ArrayList<Answer>(), inflater);
-	}
-
-	private QuestionDetailsAdapter(QuestionDetails questionDetails,
-			IPreferenceManager preferenceManager,
-			int listItemResourceId,
-			List<Answer> answers,
-			LayoutInflater inflater) {
-		super(questionDetails, listItemResourceId, answers);
+			LayoutInflater inflater,
+			IPreferenceManager preferenceManager) {
 		this.questionDetails = questionDetails;
-		this.preferenceManager = preferenceManager;
 		this.inflater = inflater;
-		this.listItemResourceId = listItemResourceId;
-		this.answers = answers;
+		this.preferenceManager = preferenceManager;
+	}
+	
+	public void add(Answer answer) {
+		answers.add(answer);
+	}
+	
+	public void clear() {
+		answers.clear();
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View listItemView = convertView;
-		if (listItemView == null) {
-			listItemView = inflater.inflate(listItemResourceId, null);
-		}
-		Answer answer = answers.get(position);
+	public Object getChild(int groupPosition, int childPosition) {
+		return answers.get(groupPosition).getComments().get(childPosition);
+	}
+
+	@Override
+	public long getChildId(int groupPosition, int childPosition) {
+		return childPosition;
+	}
+
+	@Override
+	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+		Comment comment = answers.get(groupPosition).getComments().get(childPosition);
+		View commentView = inflater.inflate(R.layout.question_details_comment, null);
+		TextView textViewComment = (TextView) commentView.findViewById(R.id.textViewComment);
+		textViewComment.setText(comment.getTextBody());
+		TextView textViewUserName = (TextView) commentView.findViewById(R.id.textViewUserName);
+		textViewUserName.setText(comment.getUser().getName());
+		return commentView;
+	}
+
+	@Override
+	public int getChildrenCount(int groupPosition) {
+		return answers.get(groupPosition).getComments().size();
+	}
+
+	@Override
+	public Object getGroup(int groupPosition) {
+		return answers.get(groupPosition);
+	}
+
+	@Override
+	public int getGroupCount() {
+		return answers.size();
+	}
+
+	@Override
+	public long getGroupId(int groupPosition) {
+		return groupPosition;
+	}
+
+	@Override
+	public View getGroupView(int groupPosition, boolean isExpanded,	View convertView, ViewGroup parent) {
+		View listItemView = inflater.inflate(R.layout.question_details_list_item, null);
+		Answer answer = answers.get(groupPosition);
 		User user = answer.getUser();
 		Date createDate = answer.getCreateDate();
 		String createDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(createDate);
@@ -96,9 +131,9 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQue
 		TextView textViewReputation = (TextView) listItemView.findViewById(R.id.textViewReputation);
 		TextView textViewComments = (TextView) listItemView.findViewById(R.id.textViewComments);
 		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewUpvote.setOnClickListener(new UpvoteClickListener(position + 1, answer));
+		imageViewUpvote.setOnClickListener(new UpvoteClickListener(groupPosition + 1, answer));
 		textViewVoteScore.setText(Integer.toString(answer.getVoteScore()));
-		imageViewDownvote.setOnClickListener(new DownvoteClickListener(position + 1, answer));
+		imageViewDownvote.setOnClickListener(new DownvoteClickListener(groupPosition + 1, answer));
 		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
 		textViewQuestionBody.setText(answer.getTextBody());
 		textViewAskDate.setText(createDateString);
@@ -108,7 +143,7 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQue
 		int commentCountText = answer.getComments().size() == 1 ? R.string.commentCount : R.string.commentsCount;
 		textViewComments.setText(String.format(questionDetails.getString(commentCountText), answer.getComments().size()));
 		LinearLayout answersCountLinearLayout = (LinearLayout) listItemView.findViewById(R.id.answersCountLinearLayout);
-		if (position == 0) {
+		if (groupPosition == 0) {
 			TextView textViewAnswerCount = (TextView) answersCountLinearLayout.findViewById(R.id.textViewAnswerCount);
 			int realAnswers = answers.size() - 1;
 			int answerCountText = realAnswers == 1 ? R.string.answerCount : R.string.answersCount;
@@ -118,5 +153,15 @@ public class QuestionDetailsAdapter extends ArrayAdapter<Answer> implements IQue
 			answersCountLinearLayout.setVisibility(View.GONE);
 		}
 		return listItemView;
+	}
+
+	@Override
+	public boolean hasStableIds() {
+		return false;
+	}
+
+	@Override
+	public boolean isChildSelectable(int groupPosition, int childPosition) {
+		return false;
 	}
 }

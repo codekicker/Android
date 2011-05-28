@@ -23,7 +23,7 @@ class VoteDoneCallback implements IVoteDoneCallback {
 	@Override
 	public void voteDone(boolean successful, int voteScore, String errorMessage) {
 		if (successful) {
-			LinearLayout linearLayout = (LinearLayout) questionDetails.getListView().getChildAt(rowPosition);
+			LinearLayout linearLayout = (LinearLayout) questionDetails.getExpandableListView().getChildAt(rowPosition);
 			int imageViewUpvoteResId, imageViewDownvoteResId;
 			switch (voteType) {
 			case UP:

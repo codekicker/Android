@@ -24,7 +24,7 @@ public class BindingModule extends AbstractAndroidModule {
 	
 	@Provides
 	@Inject
-	private IQuestionDetailsAdapter provideQuestionDetailsAdapter(Context context, IPreferenceManager preferenceManager, LayoutInflater inflater) {
-		return new QuestionDetailsAdapter((QuestionDetails) context, preferenceManager, R.layout.question_details_list_item, inflater);
+	private IQuestionDetailsAdapter provideQuestionDetailsAdapter(Context context, LayoutInflater inflater, IPreferenceManager preferenceManager) {
+		return new QuestionDetailsAdapter((QuestionDetails) context, inflater, preferenceManager);
 	}
 }
