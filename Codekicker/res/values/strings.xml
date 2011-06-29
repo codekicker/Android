@@ -29,4 +29,5 @@
 	<string name="errorSendingVote">Fehler beim Senden des Votes</string>
 	<string name="showComments">Kommentare einblenden</string>
 	<string name="hideComments">Kommentare ausblenden</string>
+	<string name="checkingCredentials">Überprüfe Benutzername/Kennwort</string>
 </resources>
