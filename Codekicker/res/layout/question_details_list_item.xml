@@ -1,78 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	style="@style/Application"
+	android:paddingTop="10sp"
+	android:paddingBottom="10sp">
+	<ImageView
+		android:layout_height="wrap_content"
+		android:src="@drawable/upvote"
+		android:layout_width="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:id="@+id/imageViewUpvote"
+		style="@style/QuestionDetails.VoteImage" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:id="@+id/textViewVoteScore"
+		android:text="0"
+		style="@style/QuestionDetails.Votes"
+		android:layout_alignRight="@+id/imageViewUpvote"
+		android:layout_alignLeft="@+id/imageViewUpvote"
+		android:layout_below="@+id/imageViewUpvote" />
+	<ImageView
+		android:layout_height="wrap_content"
+		android:src="@drawable/downvote"
+		android:layout_width="wrap_content"
+		android:layout_alignRight="@+id/imageViewUpvote"
+		android:id="@+id/imageViewDownvote"
+		android:layout_below="@+id/textViewVoteScore"
+		android:layout_alignLeft="@+id/imageViewUpvote"
+		style="@style/QuestionDetails.VoteImage" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/imageViewUpvote"
+		android:layout_toRightOf="@+id/imageViewUpvote"
+		android:id="@+id/textViewQuestionBody"
+		style="@style/QuestionDetails"
+		android:text="Question"
+		android:layout_width="fill_parent" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/textViewAskDate"
+		style="@style/QuestionDetails.User"
+		android:text="@string/askDate"
+		android:layout_toLeftOf="@+id/imageViewGravatar"
+		android:layout_below="@+id/textViewQuestionBody" />
+	<ImageView
+		android:layout_height="wrap_content"
+		android:src="@drawable/icon"
+		android:layout_width="wrap_content"
+		android:id="@+id/imageViewGravatar"
+		style="@style/QuestionDetails.User"
+		android:layout_toLeftOf="@+id/textViewUserName"
+		android:layout_below="@+id/textViewQuestionBody" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/textViewUserName"
+		style="@style/QuestionDetails.User"
+		android:text="Logdog82"
+		android:layout_alignTop="@+id/imageViewGravatar"
+		android:layout_alignBottom="@+id/imageViewGravatar"
+		android:gravity="center_vertical"
+		android:layout_toLeftOf="@+id/textViewReputation" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/textViewReputation"
+		style="@style/QuestionDetails.User.Reputation"
+		android:text="195"
+		android:layout_alignTop="@+id/textViewUserName"
+		android:layout_alignBottom="@+id/textViewUserName"
+		android:gravity="center_vertical"
+		android:layout_alignParentRight="true" />
+	<TextView
+		android:layout_height="wrap_content"
+		style="@style/QuestionDetails.Comments"
+		android:text="5 Kommentare"
+		android:layout_width="fill_parent"
+		android:layout_below="@+id/textViewReputation"
+		android:id="@+id/textViewComments" />
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:id="@+id/answersCountLinearLayout"
+		android:layout_below="@+id/textViewComments"
+		android:visibility="gone">
+		<TextView
+			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			style="@style/Application"
-			android:paddingTop="10sp"
-			android:paddingBottom="10sp"
-			android:orientation="vertical">
-	<LinearLayout android:layout_width="fill_parent"
-				android:layout_height="wrap_content">
-		<LinearLayout android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="vertical">
-			<ImageView android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/imageViewUpvote"
-						android:src="@drawable/upvote"
-						style="@style/QuestionDetails.VoteImage" />
-			<TextView android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="0"
-					style="@style/QuestionDetails.Votes"
-					android:id="@+id/textViewVoteScore"/>
-			<ImageView android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/imageViewDownvote"
-						android:src="@drawable/downvote"
-						style="@style/QuestionDetails.VoteImage" />
-		</LinearLayout>
-		<TextView android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/textViewQuestionBody"
-				android:text="Question"
-				style="@style/QuestionDetails" />
-	</LinearLayout>
-	<LinearLayout android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:id="@+id/linearLayoutAuthor"
-				android:gravity="right|center_vertical">
-		<TextView android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:id="@+id/textViewAskDate"
-				android:text="@string/askDate"
-				style="@style/QuestionDetails.User" />
-		<ImageView android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:src="@drawable/icon"
-				android:id="@+id/imageViewGravatar"
-				style="@style/QuestionDetails.User" />
-		<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/textViewUserName"
-				android:text="Logdog82"
-				style="@style/QuestionDetails.User"/>
-		<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="195"
-				android:id="@+id/textViewReputation"
-				style="@style/QuestionDetails.User.Reputation" />
-	</LinearLayout>
-	<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/textViewComments"
-			style="@style/QuestionDetails.Comments"
-			android:text="5 Kommentare" />
-	<LinearLayout android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical"
-				android:id="@+id/answersCountLinearLayout"
-				android:visibility="gone">
-		<TextView android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:text="@string/answersCount"
-				android:id="@+id/textViewAnswerCount"
-				style="@style/QuestionDetails.AnswerCount"/>
+			android:text="@string/answersCount"
+			android:id="@+id/textViewAnswerCount"
+			style="@style/QuestionDetails.AnswerCount" />
 		<View style="@style/QuestionDetails.Divider" />
 	</LinearLayout>
-</LinearLayout>
+</RelativeLayout>
