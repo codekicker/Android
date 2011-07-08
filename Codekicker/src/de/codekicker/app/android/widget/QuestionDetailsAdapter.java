@@ -15,13 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
+import de.codekicker.app.android.business.VoteType;
 import de.codekicker.app.android.model.Answer;
 import de.codekicker.app.android.model.Comment;
 import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements IQuestionDetailsAdapter {
-	private static final String TAG = "QuestionDetailsAdapter2";
+	private static final String TAG = QuestionDetailsAdapter.class.getSimpleName();
 	private List<Answer> answers = new ArrayList<Answer>();
 	private final QuestionDetails questionDetails;
 	private final LayoutInflater inflater;
@@ -121,8 +122,6 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 		String createDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(createDate);
 		String createTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(createDate);
 		createDateString = String.format(questionDetails.getString(R.string.askDate), createDateString, createTimeString);
-		ImageView imageViewUpvote = (ImageView) listItemView.findViewById(R.id.imageViewUpvote);
-		ImageView imageViewDownvote = (ImageView) listItemView.findViewById(R.id.imageViewDownvote);
 		TextView textViewVoteScore = (TextView) listItemView.findViewById(R.id.textViewVoteScore);
 		TextView textViewQuestionBody = (TextView) listItemView.findViewById(R.id.textViewQuestionBody);
 		TextView textViewAskDate = (TextView) listItemView.findViewById(R.id.textViewAskDate);
@@ -130,11 +129,9 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 		TextView textViewUserName = (TextView) listItemView.findViewById(R.id.textViewUserName);
 		TextView textViewReputation = (TextView) listItemView.findViewById(R.id.textViewReputation);
 		TextView textViewComments = (TextView) listItemView.findViewById(R.id.textViewComments);
-		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewUpvote.setOnClickListener(new UpvoteClickListener(groupPosition + 1, answer));
+		prepareUpvote(listItemView, groupPosition, answer);
+		prepareDownvote(listItemView, groupPosition, answer);
 		textViewVoteScore.setText(Integer.toString(answer.getVoteScore()));
-		imageViewDownvote.setOnClickListener(new DownvoteClickListener(groupPosition + 1, answer));
-		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
 		textViewQuestionBody.setText(answer.getTextBody());
 		textViewAskDate.setText(createDateString);
 		imageViewGravatar.setImageBitmap(user.getGravatar());
@@ -153,6 +150,24 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 			answersCountLinearLayout.setVisibility(View.GONE);
 		}
 		return listItemView;
+	}
+
+	private void prepareUpvote(View listItemView, int groupPosition, Answer answer) {
+		ImageView imageViewUpvote = (ImageView) listItemView.findViewById(R.id.imageViewUpvote);
+		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
+		imageViewUpvote.setOnClickListener(new UpvoteClickListener(groupPosition + 1, answer));
+		if (answer.getVoteType() == VoteType.UP) {
+			imageViewUpvote.setImageResource(R.drawable.upvoteselected);
+		}
+	}
+	
+	private void prepareDownvote(View listItemView, int groupPosition, Answer answer) {
+		ImageView imageViewDownvote = (ImageView) listItemView.findViewById(R.id.imageViewDownvote);
+		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
+		imageViewDownvote.setOnClickListener(new DownvoteClickListener(groupPosition + 1, answer));
+		if (answer.getVoteType() == VoteType.DOWN) {
+			imageViewDownvote.setImageResource(R.drawable.downvoteselected);
+		}
 	}
 
 	@Override

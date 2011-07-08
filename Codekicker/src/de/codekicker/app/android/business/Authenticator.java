@@ -9,7 +9,7 @@ import android.util.Log;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class Authenticator extends RoboAsyncTask<Boolean> implements IAuthenticator {	
-	private static final String TAG = "Authenticator";
+	private static final String TAG = Authenticator.class.getSimpleName();
 	private static final String URL = "TestAuthentication.json";
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;

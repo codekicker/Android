@@ -14,7 +14,7 @@ import de.codekicker.app.android.business.IAuthenticator.SuccessCallback;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 public class Preferences extends RoboPreferenceActivity {
-	private static final String TAG = "PreferenceActivity";
+	private static final String TAG = Preferences.class.getSimpleName();
 	@Inject private IPreferenceManager preferenceManager;
 	@Inject private IAuthenticator authenticator;
 	

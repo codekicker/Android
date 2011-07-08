@@ -24,7 +24,7 @@ import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.widget.IQuestionsListAdapter;
 
 public class QuestionList extends RoboListActivity {
-	private static final String TAG = "QuestionList";
+	private static final String TAG = QuestionList.class.getSimpleName();
 	@Inject private INetwork network;
 	@Inject private IQuestionListDownloader questionListDownloader;
 	@Inject private IQuestionsListAdapter listAdapter;

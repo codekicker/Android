@@ -21,7 +21,7 @@ import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class AnswersDownloader extends RoboAsyncTask<List<Answer>> implements IAnswersDownloader {
-	private static final String TAG = "QuestionDetailsDownloader";
+	private static final String TAG = AnswersDownloader.class.getSimpleName();
 	private static final String DOWNLOAD_URL = "QuestionView.json";
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;
@@ -50,7 +50,12 @@ class AnswersDownloader extends RoboAsyncTask<List<Answer>> implements IAnswersD
 		List<Answer> answers = new ArrayList<Answer>();
 		try {
 			Log.v(TAG, "Downloading question details");
-			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "id=" + question.getId());
+			String username = null, password = null;
+			if (preferenceManager.isUserAuthenticated()) {
+				username = preferenceManager.getUsername();
+				password = preferenceManager.getPassword();
+			}
+			String json = serverRequest.downloadJSON(preferenceManager.getApiBaseUrl() + DOWNLOAD_URL, "id=" + question.getId(), username, password);
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			User questionUser = question.getUser();
@@ -90,11 +95,21 @@ class AnswersDownloader extends RoboAsyncTask<List<Answer>> implements IAnswersD
 						gravatarId,
 						gravatarBitmapDownloader.downloadBitmap(gravatarId));
 				Date createDateTime = simpleDateFormat.parse(rawAnswer.getString("CreateDateTime"));
+				String rawVoteType = rawAnswer.getString("VoteType");
+				VoteType voteType;
+				if (rawVoteType.equalsIgnoreCase("Up")) {
+					voteType = VoteType.UP;
+				} else if (rawVoteType.equalsIgnoreCase("Down")) {
+					voteType = VoteType.DOWN;
+				} else {
+					voteType = VoteType.RESET;
+				}
 				Answer answer = new Answer(rawAnswer.optInt("ID", -1),
 						rawAnswer.getBoolean("IsQuestion"),
 						createDateTime,
 						rawAnswer.getString("TextBody"),
 						rawAnswer.getInt("VoteScore"),
+						voteType,
 						rawAnswer.optBoolean("IsAccepted", false),
 						user,
 						comments);

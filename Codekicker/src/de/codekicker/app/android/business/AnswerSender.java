@@ -13,7 +13,7 @@ import de.codekicker.app.android.model.Question;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class AnswerSender extends RoboAsyncTask<Boolean> implements IAnswerSender {
-	private final static String TAG = "AnswerSender";
+	private final static String TAG = AnswerSender.class.getSimpleName();
 	private static final String ANSWER_URL = "AddAnswer.json";
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import roboguice.activity.RoboExpandableListActivity;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectResource;
 import android.app.ProgressDialog;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,28 +42,28 @@ import de.codekicker.app.android.preference.IPreferenceManager;
 import de.codekicker.app.android.widget.IQuestionDetailsAdapter;
 
 public class QuestionDetails extends RoboExpandableListActivity implements OnClickListener {
-	private static final String TAG = "QuestionDetails2";
+	private static final String TAG = QuestionDetails.class.getSimpleName();
 	@Inject private LayoutInflater layoutInflater;
 	@Inject private IPreferenceManager preferenceManager;
-	@Inject private IAnswersDownloader questionDetailsDownloader;
+	@Inject private IAnswersDownloader ansersDownloader;
 	@Inject private INetwork network;
 	@Inject private IAnswerSender answerSender;
 	@Inject private IVoter voter;
 	@Inject private IVoteDoneCallbackFactory voteDoneCallbackFactory;
 	@Inject private Provider<IQuestionDetailsAdapter> listAdapterProvider;
+	@InjectExtra("de.codekicker.app.android.SelectedQuestion") private Question question;
+	@InjectResource(R.drawable.question_details_comments_state) Drawable groupIndicator;
 	private IQuestionDetailsAdapter listAdapter;
 	private ProgressDialog progressDialog;
-	private Question question;
 	private List<Answer> answers = new ArrayList<Answer>();
 	private EditText editTextYourAnswer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		question = getIntent().getParcelableExtra("de.codekicker.app.android.SelectedQuestion");
 		listAdapter = listAdapterProvider.get();
 		ExpandableListView listView = getExpandableListView();
-		listView.setGroupIndicator(getResources().getDrawable(R.drawable.question_details_comments_state));
+		listView.setGroupIndicator(groupIndicator);
 		registerForContextMenu(listView);
 		fillHeaderAndFooter(listView);
 		// Handle NonConfigurationInstace because screen orientation could have changed
@@ -91,7 +94,7 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 	
 	private void downloadQuestion() {
 		progressDialog = ProgressDialog.show(this, null, getString(R.string.refreshingData));
-		questionDetailsDownloader.downloadDetails(question, new DownloadDoneCallback() {
+		ansersDownloader.downloadDetails(question, new DownloadDoneCallback() {
 			@Override
 			public void downloadDone(List<Answer> answers) {
 				QuestionDetails.this.answers = answers;
@@ -145,7 +148,13 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 	
 	public void onUpvoteClick(int rowPosition, Answer answer) {
 		if (network.isOnline()) {
-			voter.voteUp(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
+			if (answer.getVoteType() == VoteType.UP) {
+				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
+				answer.setVoteType(VoteType.RESET);
+			} else {
+				voter.voteUp(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
+				answer.setVoteType(VoteType.UP);
+			}
 		} else {
 			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
 		}
@@ -153,7 +162,13 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 	
 	public void onDownvoteClick(int rowPosition, Answer answer) {
 		if (network.isOnline()) {
-			voter.voteDown(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
+			if (answer.getVoteType() == VoteType.DOWN) {
+				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
+				answer.setVoteType(VoteType.RESET);
+			} else {
+				voter.voteDown(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
+				answer.setVoteType(VoteType.DOWN);
+			}
 		} else {
 			Toast.makeText(this, R.string.NetworkNotConnected, Toast.LENGTH_LONG).show();
 		}

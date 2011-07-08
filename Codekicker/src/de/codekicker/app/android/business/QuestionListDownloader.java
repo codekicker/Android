@@ -21,7 +21,7 @@ import de.codekicker.app.android.model.User;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class QuestionListDownloader extends RoboAsyncTask<List<Question>> implements IQuestionListDownloader {
-	private static final String TAG = "QuestionListDownloader";
+	private static final String TAG = QuestionListDownloader.class.getSimpleName();
 	private static final String DOWNLOAD_URL = "QuestionList.json";
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;

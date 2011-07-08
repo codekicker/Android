@@ -9,7 +9,7 @@ import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
 
 class VoteDoneCallback implements IVoteDoneCallback {
-	private static final String TAG = "VoteDone";
+	private static final String TAG = VoteDoneCallback.class.getSimpleName();
 	private final QuestionDetails questionDetails;
 	private final int rowPosition;
 	private final VoteType voteType;
@@ -33,6 +33,10 @@ class VoteDoneCallback implements IVoteDoneCallback {
 			case DOWN:
 				imageViewUpvoteResId = R.drawable.upvote;
 				imageViewDownvoteResId = R.drawable.downvoteselected;
+				break;
+			case RESET:
+				imageViewUpvoteResId = R.drawable.upvote;
+				imageViewDownvoteResId = R.drawable.downvote;
 				break;
 			default:
 				Log.e(TAG, "Error finding matching view after vote");

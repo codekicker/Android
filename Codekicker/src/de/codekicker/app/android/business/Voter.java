@@ -10,8 +10,11 @@ import com.google.inject.Inject;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class Voter extends RoboAsyncTask<Boolean> implements IVoter {
-	private static final String TAG = "Voter";
+	private static final String TAG = Voter.class.getSimpleName();
 	private static final String VOTE_URL = "VoteAnswer.json";
+	private static final String VOTE_UP = "Up";
+	private static final String VOTE_DOWN = "Down";
+	private static final String VOTE_RESET = "Reset";
 	private final IPreferenceManager preferenceManager;
 	private final IServerRequest serverRequest;
 	private int answerId, voteScore;
@@ -24,27 +27,30 @@ class Voter extends RoboAsyncTask<Boolean> implements IVoter {
 		this.serverRequest = serverRequest;
 	}
 	
+	@Override
 	public void voteUp(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Voting up");
 		this.answerId = answerId;
 		this.callback = callback;
-		voteType = "Up";
+		voteType = VOTE_UP;
 		execute();
 	}
 	
+	@Override
 	public void voteDown(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Voting down");
 		this.answerId = answerId;
 		this.callback = callback;
-		voteType = "Down";
+		voteType = VOTE_DOWN;
 		execute();
 	}
 	
+	@Override
 	public void voteReset(int answerId, IVoteDoneCallback callback) {
 		Log.v(TAG, "Resetting vote");
 		this.answerId = answerId;
 		this.callback = callback;
-		voteType = "Reset";
+		voteType = VOTE_RESET;
 		execute();
 	}
 
