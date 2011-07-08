@@ -1,75 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:orientation="vertical"
-			style="@style/Application">
-	<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/textViewTitle"
-			style="@style/QuestionsList.Title"
-			android:text="Title"/>
-	<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/textViewQuestionBody"
-			style="@style/QuestionsList.QuestionBody"
-			android:text="Question"/>
-	<de.codekicker.app.android.widget.FlowLayout android:layout_height="wrap_content"
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  style="@style/QuestionsList">
+    <TextView android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:id="@+id/textViewTitle" style="@style/QuestionsList.Title" android:layout_width="fill_parent" android:text="Title"></TextView>
+    <TextView android:layout_height="wrap_content" android:layout_below="@+id/textViewTitle" android:layout_alignParentLeft="true" android:id="@+id/textViewQuestionBody" android:layout_width="fill_parent" style="@style/QuestionsList.QuestionBody" android:text="Question"></TextView>
+    	<de.codekicker.app.android.widget.FlowLayout android:layout_height="wrap_content"
 												android:layout_width="fill_parent"
 												android:id="@+id/flowLayoutTags"
-												android:layout_marginBottom="5sp" />
-	<LinearLayout android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:orientation="horizontal"
-				android:paddingLeft="5sp"
-				android:paddingBottom="10sp">
-		<LinearLayout android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					style="@style/QuestionsList.Score">
-			<TextView android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/textViewVoteScore"
-					style="@style/QuestionsList.Score.Count"
-					android:text="0" />
-			<TextView android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					style="@style/QuestionsList.Score.Text"
-					android:text="@string/voteScore" />
-		</LinearLayout>
-		<LinearLayout android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					style="@style/QuestionsList.Score">
-			<TextView android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/textViewAnswerCount"
-					style="@style/QuestionsList.Score.Count"
-					android:text="0" />
-			<TextView android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					style="@style/QuestionsList.Score.Text"
-					android:id="@+id/textViewAnswer"
-					android:text="@string/answers" />
-		</LinearLayout>
-		<LinearLayout android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					style="@style/QuestionsList.Score">
-			<TextView android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					style="@style/QuestionsList.Score.Count"
-					android:id="@+id/textViewViewCount"
-					android:text="0" />
-			<TextView android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					style="@style/QuestionsList.Score.Text"
-					android:text="@string/views" />
-		</LinearLayout>
-		<TextView android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:id="@+id/textViewAskDate"
-				style="@style/QuestionsList.AskDate"
-				android:text="@string/askDate" />
-	</LinearLayout>
-</LinearLayout>
+												android:layout_marginBottom="5sp" 
+												android:layout_below="@+id/textViewQuestionBody"/>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_below="@+id/flowLayoutTags" android:id="@+id/textViewVoteScore" style="@style/QuestionsList.Score.Count" android:text="0" android:layout_alignLeft="@+id/textViewVoteScoreDescription" android:layout_alignRight="@+id/textViewVoteScoreDescription"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_below="@+id/textViewVoteScore" android:layout_alignParentLeft="true" android:text="@string/voteScore" style="@style/QuestionsList.Score.Text" android:id="@+id/textViewVoteScoreDescription" android:layout_marginLeft="5dp"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignTop="@+id/textViewVoteScore" android:layout_toRightOf="@+id/textViewVoteScore" android:id="@+id/textViewAnswerCount" style="@style/QuestionsList.Score.Count" android:text="0" android:layout_alignRight="@+id/textViewAnswer"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignTop="@+id/textViewVoteScoreDescription" android:id="@+id/textViewAnswer" style="@style/QuestionsList.Score.Text" android:text="@string/answers" android:layout_toRightOf="@+id/textViewVoteScoreDescription"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_above="@+id/textViewAnswer" android:layout_toRightOf="@+id/textViewAnswerCount" android:id="@+id/textViewViewCount" style="@style/QuestionsList.Score.Count" android:text="0" android:layout_alignRight="@+id/textViewViewCountDescription"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignTop="@+id/textViewAnswer" android:layout_toRightOf="@+id/textViewAnswer" style="@style/QuestionsList.Score.Text" android:text="@string/views" android:id="@+id/textViewViewCountDescription"></TextView>
+    	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignTop="@+id/textViewViewCount" android:id="@+id/textViewAskDate" style="@style/QuestionsList.AskDate" android:text="@string/askDate" android:layout_alignParentRight="true"></TextView>
+</RelativeLayout>

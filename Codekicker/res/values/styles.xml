@@ -8,61 +8,64 @@
 	<style name="QuestionsList.Title">
 		<item name="android:textColor">#0071bc</item>
 		<item name="android:textStyle">bold</item>
-		<item name="android:padding">5sp</item>
+		<item name="android:padding">5dp</item>
 		<item name="android:textSize">16sp</item>
 	</style>
 	<style name="QuestionsList.QuestionBody">
-		<item name="android:paddingLeft">5sp</item>
-		<item name="android:paddingBottom">5sp</item>
-		<item name="android:paddingRight">5sp</item>
+		<item name="android:paddingLeft">5dp</item>
+		<item name="android:paddingBottom">5dp</item>
+		<item name="android:paddingRight">5dp</item>
 	</style>
 	<style name="QuestionsList.TagTextView">
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:textColor">#3971C2</item>
 		<item name="android:background">#FDF5CE</item>
-		<item name="android:layout_marginLeft">5sp</item>
+		<item name="android:layout_marginLeft">5dp</item>
 		<item name="android:textSize">12sp</item>
-		<item name="android:padding">2sp</item>
+		<item name="android:padding">2dp</item>
 	</style>
 	<style name="QuestionsList.Score">
 		<item name="android:background">#DDDDDD</item>
-		<item name="android:paddingLeft">5sp</item>
-		<item name="android:paddingRight">5sp</item>
+		<item name="android:paddingLeft">5dp</item>
+		<item name="android:paddingRight">5dp</item>
 	</style>
 	<style name="QuestionsList.Score.Count">
-		<item name="android:padding">0sp</item>
+		<item name="android:paddingTop">3dp</item>
+		<item name="android:paddingBottom">0dp</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:textSize">15sp</item>
 		<item name="android:gravity">center_horizontal</item>
 	</style>
 	<style name="QuestionsList.Score.Text">
-		<item name="android:padding">0sp</item>
+		<item name="android:paddingTop">0dp</item>
+		<item name="android:paddingBottom">3dp</item>
 		<item name="android:textSize">13sp</item>
 	</style>
 	<style name="QuestionsList.AskDate">
 		<item name="android:textColor">#b1aaaa</item>
 		<item name="android:gravity">right|bottom</item>
-		<item name="android:paddingRight">5sp</item>
+		<item name="android:paddingRight">5dp</item>
 	</style>
 	<style name="QuestionDetails">
 		<item name="android:textColor">#000000</item>
 	</style>
 	<style name="QuestionDetails.VoteImage">
 		<item name="android:background">@android:color/transparent</item>
+		<item name="android:padding">5dp</item>
 	</style>
 	<style name="QuestionDetails.Votes">
 		<item name="android:gravity">center</item>
 	</style>
 	<style name="QuestionDetails.AnswerCount">
 		<item name="android:textStyle">bold</item>
-		<item name="android:layout_marginLeft">5sp</item>
+		<item name="android:layout_marginLeft">5dp</item>
 	</style>
 	<style name="QuestionDetails.Divider">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">1sp</item>
 		<item name="android:background">#000000</item>
-		<item name="android:layout_margin">5sp</item>
+		<item name="android:layout_margin">5dp</item>
 	</style>
 	<style name="QuestionDetails.User">
 		<item name="android:layout_marginRight">10sp</item>
@@ -73,7 +76,7 @@
 	<style name="QuestionDetails.Comments">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_marginRight">10sp</item>
+		<item name="android:layout_marginRight">10dp</item>
 		<item name="android:gravity">right</item>
 		<item name="android:textColor">#444444</item>
 	</style>
@@ -83,9 +86,9 @@
 	<style name="Comment.Text">
 		<item name="android:textColor">#000000</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:padding">10sp</item>
+		<item name="android:padding">10dp</item>
 	</style>
 	<style name="Comment.UserName">
-		<item name="android:paddingRight">10sp</item>
+		<item name="android:paddingRight">10dp</item>
 	</style>
 </resources>
