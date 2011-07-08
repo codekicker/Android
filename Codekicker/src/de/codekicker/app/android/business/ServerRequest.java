@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -21,7 +22,7 @@ import com.google.inject.Inject;
 import de.codekicker.app.android.preference.IPreferenceManager;
 
 class ServerRequest implements IServerRequest {
-	private static final String TAG = "ServerRequest";
+	private static final String TAG = ServerRequest.class.getSimpleName();
 	private final String appIdKey;
 	private final String appId;
 	
@@ -66,9 +67,12 @@ class ServerRequest implements IServerRequest {
 			httpPost.addHeader(appIdKey, appId);
 			httpPost.setEntity(new ByteArrayEntity(params));
 			if (username != null && password != null) {
-				httpClient.getCredentialsProvider().setCredentials(
-						new AuthScope(uri.getHost(), uri.getPort()),
-						new UsernamePasswordCredentials(username, password));
+				String auth = username + ":" + password;
+				httpPost.addHeader("Authorization", "Basic " + Base64.encodeToString(auth.getBytes(), Base64.NO_WRAP));
+				// TODO: Codekicker does not always return HTTP 401 so this doesn't work all the time
+//				httpClient.getCredentialsProvider().setCredentials(
+//						new AuthScope(uri.getHost(), uri.getPort()),
+//						new UsernamePasswordCredentials(username, password));
 			}
 			HttpResponse response = httpClient.execute(httpPost);
 			InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
