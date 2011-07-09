@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -148,6 +149,9 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 	
 	public void onUpvoteClick(int rowPosition, Answer answer) {
 		if (network.isOnline()) {
+			RelativeLayout relativeLayout = (RelativeLayout) getExpandableListView().getChildAt(rowPosition);
+			relativeLayout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+			relativeLayout.findViewById(R.id.textViewVoteScore).setVisibility(View.INVISIBLE);
 			if (answer.getVoteType() == VoteType.UP) {
 				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
 				answer.setVoteType(VoteType.RESET);
@@ -162,6 +166,9 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 	
 	public void onDownvoteClick(int rowPosition, Answer answer) {
 		if (network.isOnline()) {
+			RelativeLayout relativeLayout = (RelativeLayout) getExpandableListView().getChildAt(rowPosition);
+			relativeLayout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+			relativeLayout.findViewById(R.id.textViewVoteScore).setVisibility(View.INVISIBLE);
 			if (answer.getVoteType() == VoteType.DOWN) {
 				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
 				answer.setVoteType(VoteType.RESET);
