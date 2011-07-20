@@ -7,11 +7,12 @@ import java.util.List;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import de.codekicker.app.android.R;
 import de.codekicker.app.android.activity.QuestionDetails;
@@ -28,31 +29,31 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 	private final LayoutInflater inflater;
 	private final IPreferenceManager preferenceManager;
 	private class UpvoteClickListener implements OnClickListener {
-		private final Answer answer;
-		private final int rowPosition;
+		private final RelativeLayout relativeLayout;
+		private final int groupPosition;
 		
-		public UpvoteClickListener(int rowPosition, Answer answer) {
-			this.answer = answer;
-			this.rowPosition = rowPosition;
+		public UpvoteClickListener(int groupPosition, RelativeLayout relativeLayout) {
+			this.relativeLayout = relativeLayout;
+			this.groupPosition = groupPosition;
 		}
 		
 		@Override
 		public void onClick(View v) {
-			questionDetails.onUpvoteClick(rowPosition, answer);
+			questionDetails.onUpvoteClick(groupPosition, relativeLayout);
 		}
 	}
 	private class DownvoteClickListener implements OnClickListener {
-		private final Answer answer;
-		private final int rowPosition;
+		private final RelativeLayout relativeLayout;
+		private final int groupPosition;
 		
-		public DownvoteClickListener(int rowPosition, Answer answer) {
-			this.answer = answer;
-			this.rowPosition = rowPosition;
+		public DownvoteClickListener(int groupPosition, RelativeLayout relativeLayout) {
+			this.relativeLayout = relativeLayout;
+			this.groupPosition = groupPosition;
 		}
 		
 		@Override
 		public void onClick(View v) {
-			questionDetails.onDownvoteClick(rowPosition, answer);
+			questionDetails.onDownvoteClick(groupPosition, relativeLayout);
 		}
 	}
 	
@@ -115,22 +116,22 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,	View convertView, ViewGroup parent) {
-		View listItemView = inflater.inflate(R.layout.question_details_list_item, null);
+		RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.question_details_list_item, null);
 		Answer answer = answers.get(groupPosition);
 		User user = answer.getUser();
 		Date createDate = answer.getCreateDate();
 		String createDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(createDate);
 		String createTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(createDate);
 		createDateString = String.format(questionDetails.getString(R.string.askDate), createDateString, createTimeString);
-		TextView textViewVoteScore = (TextView) listItemView.findViewById(R.id.textViewVoteScore);
-		TextView textViewQuestionBody = (TextView) listItemView.findViewById(R.id.textViewQuestionBody);
-		TextView textViewAskDate = (TextView) listItemView.findViewById(R.id.textViewAskDate);
-		ImageView imageViewGravatar = (ImageView) listItemView.findViewById(R.id.imageViewGravatar);
-		TextView textViewUserName = (TextView) listItemView.findViewById(R.id.textViewUserName);
-		TextView textViewReputation = (TextView) listItemView.findViewById(R.id.textViewReputation);
-		TextView textViewComments = (TextView) listItemView.findViewById(R.id.textViewComments);
-		prepareUpvote(listItemView, groupPosition, answer);
-		prepareDownvote(listItemView, groupPosition, answer);
+		TextView textViewVoteScore = (TextView) relativeLayout.findViewById(R.id.textViewVoteScore);
+		TextView textViewQuestionBody = (TextView) relativeLayout.findViewById(R.id.textViewQuestionBody);
+		TextView textViewAskDate = (TextView) relativeLayout.findViewById(R.id.textViewAskDate);
+		ImageView imageViewGravatar = (ImageView) relativeLayout.findViewById(R.id.imageViewGravatar);
+		TextView textViewUserName = (TextView) relativeLayout.findViewById(R.id.textViewUserName);
+		TextView textViewReputation = (TextView) relativeLayout.findViewById(R.id.textViewReputation);
+		TextView textViewComments = (TextView) relativeLayout.findViewById(R.id.textViewComments);
+		prepareUpvote(relativeLayout, groupPosition, answer);
+		prepareDownvote(relativeLayout, groupPosition, answer);
 		textViewVoteScore.setText(Integer.toString(answer.getVoteScore()));
 		textViewQuestionBody.setText(answer.getTextBody());
 		textViewAskDate.setText(createDateString);
@@ -139,7 +140,7 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 		textViewReputation.setText(Integer.toString(user.getReputation()));
 		int commentCountText = answer.getComments().size() == 1 ? R.string.commentCount : R.string.commentsCount;
 		textViewComments.setText(String.format(questionDetails.getString(commentCountText), answer.getComments().size()));
-		LinearLayout answersCountLinearLayout = (LinearLayout) listItemView.findViewById(R.id.answersCountLinearLayout);
+		LinearLayout answersCountLinearLayout = (LinearLayout) relativeLayout.findViewById(R.id.answersCountLinearLayout);
 		if (groupPosition == 0) {
 			TextView textViewAnswerCount = (TextView) answersCountLinearLayout.findViewById(R.id.textViewAnswerCount);
 			int realAnswers = answers.size() - 1;
@@ -149,22 +150,22 @@ public class QuestionDetailsAdapter extends BaseExpandableListAdapter implements
 		} else {
 			answersCountLinearLayout.setVisibility(View.GONE);
 		}
-		return listItemView;
+		return relativeLayout;
 	}
 
-	private void prepareUpvote(View listItemView, int groupPosition, Answer answer) {
-		ImageView imageViewUpvote = (ImageView) listItemView.findViewById(R.id.imageViewUpvote);
+	private void prepareUpvote(RelativeLayout relativeLayout, int groupPosition, Answer answer) {
+		ImageView imageViewUpvote = (ImageView) relativeLayout.findViewById(R.id.imageViewUpvote);
 		imageViewUpvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewUpvote.setOnClickListener(new UpvoteClickListener(groupPosition + 1, answer));
+		imageViewUpvote.setOnClickListener(new UpvoteClickListener(groupPosition, relativeLayout));
 		if (answer.getVoteType() == VoteType.UP) {
 			imageViewUpvote.setImageResource(R.drawable.upvoteselected);
 		}
 	}
 	
-	private void prepareDownvote(View listItemView, int groupPosition, Answer answer) {
-		ImageView imageViewDownvote = (ImageView) listItemView.findViewById(R.id.imageViewDownvote);
+	private void prepareDownvote(RelativeLayout relativeLayout, int groupPosition, Answer answer) {
+		ImageView imageViewDownvote = (ImageView) relativeLayout.findViewById(R.id.imageViewDownvote);
 		imageViewDownvote.setEnabled(preferenceManager.isUserAuthenticated());
-		imageViewDownvote.setOnClickListener(new DownvoteClickListener(groupPosition + 1, answer));
+		imageViewDownvote.setOnClickListener(new DownvoteClickListener(groupPosition, relativeLayout));
 		if (answer.getVoteType() == VoteType.DOWN) {
 			imageViewDownvote.setImageResource(R.drawable.downvoteselected);
 		}

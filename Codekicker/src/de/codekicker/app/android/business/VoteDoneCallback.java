@@ -12,18 +12,17 @@ import de.codekicker.app.android.activity.QuestionDetails;
 class VoteDoneCallback implements IVoteDoneCallback {
 	private static final String TAG = VoteDoneCallback.class.getSimpleName();
 	private final QuestionDetails questionDetails;
-	private final int rowPosition;
+	private final RelativeLayout relativeLayout;
 	private final VoteType voteType;
 	
-	public VoteDoneCallback(QuestionDetails questionDetails, int rowPosition, VoteType voteType) {
+	public VoteDoneCallback(QuestionDetails questionDetails, RelativeLayout relativeLayout, VoteType voteType) {
 		this.questionDetails = questionDetails;
-		this.rowPosition = rowPosition;
+		this.relativeLayout = relativeLayout;
 		this.voteType = voteType;
 	}
 
 	@Override
 	public void voteDone(boolean successful, int voteScore, String errorMessage) {
-		RelativeLayout relativeLayout = (RelativeLayout) questionDetails.getExpandableListView().getChildAt(rowPosition);
 		if (successful) {
 			int imageViewUpvoteResId, imageViewDownvoteResId;
 			switch (voteType) {

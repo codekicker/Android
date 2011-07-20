@@ -147,16 +147,16 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 		}
 	}
 	
-	public void onUpvoteClick(int rowPosition, Answer answer) {
+	public void onUpvoteClick(int groupPosition, RelativeLayout relativeLayout) {
 		if (network.isOnline()) {
-			RelativeLayout relativeLayout = (RelativeLayout) getExpandableListView().getChildAt(rowPosition);
+			Answer answer = (Answer) getExpandableListView().getExpandableListAdapter().getGroup(groupPosition);
 			relativeLayout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			relativeLayout.findViewById(R.id.textViewVoteScore).setVisibility(View.INVISIBLE);
 			if (answer.getVoteType() == VoteType.UP) {
-				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
+				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, relativeLayout, VoteType.RESET));
 				answer.setVoteType(VoteType.RESET);
 			} else {
-				voter.voteUp(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.UP));
+				voter.voteUp(answer.getId(), voteDoneCallbackFactory.create(this, relativeLayout, VoteType.UP));
 				answer.setVoteType(VoteType.UP);
 			}
 		} else {
@@ -164,16 +164,16 @@ public class QuestionDetails extends RoboExpandableListActivity implements OnCli
 		}
 	}
 	
-	public void onDownvoteClick(int rowPosition, Answer answer) {
+	public void onDownvoteClick(int groupPosition, RelativeLayout relativeLayout) {
 		if (network.isOnline()) {
-			RelativeLayout relativeLayout = (RelativeLayout) getExpandableListView().getChildAt(rowPosition);
+			Answer answer = (Answer) getExpandableListView().getExpandableListAdapter().getGroup(groupPosition);
 			relativeLayout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			relativeLayout.findViewById(R.id.textViewVoteScore).setVisibility(View.INVISIBLE);
 			if (answer.getVoteType() == VoteType.DOWN) {
-				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.RESET));
+				voter.voteReset(answer.getId(), voteDoneCallbackFactory.create(this, relativeLayout, VoteType.RESET));
 				answer.setVoteType(VoteType.RESET);
 			} else {
-				voter.voteDown(answer.getId(), voteDoneCallbackFactory.create(this, rowPosition, VoteType.DOWN));
+				voter.voteDown(answer.getId(), voteDoneCallbackFactory.create(this, relativeLayout, VoteType.DOWN));
 				answer.setVoteType(VoteType.DOWN);
 			}
 		} else {
