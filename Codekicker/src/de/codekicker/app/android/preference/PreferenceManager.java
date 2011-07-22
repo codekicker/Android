@@ -15,7 +15,7 @@ class PreferenceManager implements IPreferenceManager {
 	
 	@Override
 	public String getApiBaseUrl() {
-		return "http://dev.codekicker.de/api/v1/";
+		return "http://codekicker.de/api/v1/";
 	}
 	
 	@Override
